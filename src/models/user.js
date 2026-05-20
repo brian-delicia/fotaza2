@@ -34,7 +34,7 @@ User.init({
     tableName:'users',
     timestamps:true,
     createdAt:'created_at',
-    deletedAt:true
+    paranoid:true
 
 
 });
