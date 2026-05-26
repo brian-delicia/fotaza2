@@ -27,6 +27,11 @@ User.init({
     active:{
         type:DataTypes.BOOLEAN,
         defaultValue:true
+    },
+    removed_posts_count:{
+        type:DataTypes.INTEGER,
+        defaultValue:0
+
     }
 },{
     sequelize,

@@ -20,6 +20,10 @@ class Post extends Model {}
     status:{
         type:DataTypes.STRING(100),
         defaultValue:'active'
+    },
+    locked_by_report:{
+        type:DataTypes.BOOLEAN,
+        defaultValue:false
     }
    
 },{
