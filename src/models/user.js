@@ -22,13 +22,14 @@ User.init({
     },
     role:{
         type:DataTypes.STRING(60),
+        allowNull: false,
         defaultValue: 'user'
     },
     active:{
         type:DataTypes.BOOLEAN,
         defaultValue:true
     },
-    removed_posts_count:{
+    removed_posts_count:{               //CANTIDAD DE PULICACIONES ELIMINADAS
         type:DataTypes.INTEGER,
         defaultValue:0
 

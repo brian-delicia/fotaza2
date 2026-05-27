@@ -12,7 +12,7 @@ class Post extends Model {}
     allowNull:true,
     
 },
-    comments_open:{
+    comments_open:{                   //SIRVE PARA DESABILITAR LOS COMENTARIOS
         type:DataTypes.BOOLEAN,
         defaultValue:true
         },
@@ -21,7 +21,7 @@ class Post extends Model {}
         type:DataTypes.STRING(100),
         defaultValue:'active'
     },
-    locked_by_report:{
+    locked_by_report:{               //INDICA SI UNA PUBLICACION FUE BLOQQUEADA/CERRADAA POR DENUNCIAS(REPORTS)
         type:DataTypes.BOOLEAN,
         defaultValue:false
     }

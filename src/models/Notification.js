@@ -16,13 +16,16 @@ Notification.init({
     read:{
         type:DataTypes.BOOLEAN,
         defaultValue:false
-    }
+    },
+     date: {
+    type: DataTypes.DATE,
+    defaultValue: DataTypes.NOW
+  }
 },{
     sequelize,
     modelName:'Notification',
     tableName:'notifications',
-    timestamps:true,
-    createdAt:'created_at',
+    timestamps:false,
     paranoid:true
 });
 

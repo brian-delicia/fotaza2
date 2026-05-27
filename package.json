@@ -7,10 +7,11 @@
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",
     "db:inint":"node database/init.js",
+    "db:seed":"node database/seed.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
+  "author": "brian",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
