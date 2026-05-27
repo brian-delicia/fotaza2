@@ -1,7 +1,20 @@
 const User = require('./User');
-const Image= require('./Image');
 const Post = require('./Post');
+const Image = require('./Image');
+const Tag = require('./Tag');
+const PostTag = require('./PostTag');
 const Comment = require('./Comment');
+const Rating = require('./Rating');
+const Follow = require('./Follow');
+const  Notification  = require('./Notification');
+const Collection = require('./Collection');
+const CollectionPost = require('./CollectionPost');
+const CollectionImage = require('./CollectionImage');
+const Report  =  require('./Report');
+const Interest = require('./Interest');
+const Message = require('./Message');
+
+
 
 //un usuario puede tener muchos post y un post es de un usuario
 User.hasMany(Post,{foreignKey:'user_id'});
