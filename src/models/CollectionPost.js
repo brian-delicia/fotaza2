@@ -2,6 +2,7 @@ const {Model}=require('sequelize');
 const sequelize=require('../database');
 
 class CollectionPost extends Model{}
+
 CollectionPost.init({},{
     sequelize,
     modelName:'CollectionPost',
@@ -14,4 +15,4 @@ CollectionPost.init({},{
 })
 module.exports=CollectionPost
 
-//EVITA GUARDAR LA MISMA PUBLICACION DOS VECES EN EL MISMO POST
+//EVITA GUARDAR LA MISMA PUBLICACION DOS VECES EN EL MISMA COLLECTION

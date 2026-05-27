@@ -4,7 +4,11 @@ const sequelize=require('../database');
 class Notification extends Model{}
 
 Notification.init({
-    type:{
+    type:{                                   /* type:   comment → comentario
+                                                        rating → valoración
+                                                        interest → me interesa
+                                                        follow → seguimiento
+                                                        report → denuncia*/
         type:DataTypes.STRING(100),
         allowNull:false
     }, 
@@ -26,7 +30,7 @@ Notification.init({
     modelName:'Notification',
     tableName:'notifications',
     timestamps:false,
-    paranoid:true
+   
 });
 
 module.exports=Notification;

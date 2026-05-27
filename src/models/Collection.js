@@ -1,6 +1,6 @@
 const {Model,DataTypes}=require('sequelize');
 const sequelize=require('../database');
-const { tableName } = require('./User');
+
 
 class Collection extends Model{}
 

@@ -4,7 +4,9 @@ const  sequelize=require('../database');
 class Interest extends Model{}
 
 Interest.init({
-    status:{
+    status:{                       /*open → abierto
+                                    closed → cerrado
+                                    cancelled → cancelado*/
         type:DataTypes.STRING(100),
         defaultValue:'open'
     }

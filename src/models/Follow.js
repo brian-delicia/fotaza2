@@ -13,7 +13,7 @@ Follow.init({},{
     
     indexes:[{
         unique:true,
-        fields:['follower_id','followed_id']
+        fields:['follower_id','followed_id']  //follower_id → usuario que sigue --followed_id → usuario seguido
     }]
 })
 

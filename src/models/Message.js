@@ -9,7 +9,7 @@ Message.init({
         type:DataTypes.TEXT,
         allowNull:false
     },
-    read:{
+    read:{                        //SI  FUE VISTO O LEIDO 
         type:DataTypes.BOOLEAN,
         defaultValue:false
     }

@@ -3,7 +3,7 @@ const sequelize=require('../database');
 
 class Tag extends Model  {}
 
-Tag.init({
+Tag.init({                             //ETIQUETAS
     name:{
         Type:DataTypes.STRING(100),
         allowNull:false,

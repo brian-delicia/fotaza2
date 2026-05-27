@@ -6,7 +6,7 @@ class PostTag extends Model{}
 PostTag.init({},{
     sequelize,
     modelName:'PostTag',
-    tableName:'postTags',
+    tableName:'post_tags',
     timestamps:false
 });
 

@@ -4,7 +4,7 @@ const sequelize=require('../database');
 class Report extends Model{}
 
 Report.init({
-    target_type:{
+    target_type:{                          //DENUNCIA  IMAGE O COMMENT
         type:DataTipes.STRING(100),
         allowNull:false
     },
@@ -17,8 +17,10 @@ Report.init({
         type:DataTipes.TEXT,
         allowNull:false
     },
-    status:{
-        type:DataTipes.STRING(100),
+    status:{                             /* pending → pendiente
+                                            dismissed → desestimada
+                                            accepted → aceptada*/
+        type:DataTipes.STRING(100),      
         defaultValue:'pending'
     }
 },{
