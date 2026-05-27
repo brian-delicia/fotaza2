@@ -29,7 +29,7 @@ User.init({
         type:DataTypes.BOOLEAN,
         defaultValue:true
     },
-    removed_posts_count:{               //CANTIDAD DE PULICACIONES ELIMINADAS
+    removed_posts_count:{               //CANTIDAD DE PULICACIONES ELIMINADAS/BAJADAS
         type:DataTypes.INTEGER,
         defaultValue:0
 

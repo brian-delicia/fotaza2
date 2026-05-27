@@ -23,7 +23,8 @@ Image.init({
     sequelize,
     modelName:'Image',
     tableName:'images',
-    timestamps:false
+    timestamps:true,
+    createdAt: 'created_at'
 });
 
 module.exports=Image;

@@ -10,7 +10,7 @@ Follow.init({},{
     tableName:'follows',
     timestamps:true,
     createdAt:'created_at',
-    paranoid:true,
+    
     indexes:[{
         unique:true,
         fields:['follower_id','followed_id']

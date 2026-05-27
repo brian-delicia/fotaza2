@@ -17,7 +17,7 @@ Rating.init({
     tableName:'ratings',
     timestamps:true,
     createdAt:'created_at',
-    paranoid:true,
+    
     indexes:[
         {unique:true,
             fields:['user_id','image_id']
