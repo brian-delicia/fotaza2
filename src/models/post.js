@@ -18,10 +18,13 @@ class Post extends Model {}
         },
 
     status:{
-        type:DataTypes.STRING(100),
-        defaultValue:'active' /*active → activa
-                                review → en revisión por validador
-                                removed → dada de baja*/
+        type:DataTypes.STRING(100),                      
+        defaultValue:'active',
+        validate:{
+            isIn:[['active','review','removed']]         /*active → activa
+                                                           review → en revisión por validador
+                                                           removed → dada de baja*/
+        }                                       
     },
     locked_by_report:{               //INDICA SI UNA PUBLICACION FUE BLOQQUEADA/CERRADAA POR DENUNCIAS(REPORTS)
         type:DataTypes.BOOLEAN,

@@ -20,7 +20,11 @@ app.use(express.static(path.join(__dirname,'public')));// le  dice a a express q
 app.use(session({                       //permite mantener los usuariosloguedos
     secret:process.env.SESSION_SECRET,
     resave:false,
-    saveUninitialized:false
+    saveUninitialized:false,
+    cookie:{
+        secure:false,     //producion cambiar a true
+        maxAge:24*62*62*1000 //24hs
+    }
 }))
 
 app.use((req,res,next) =>{

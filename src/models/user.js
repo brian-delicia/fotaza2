@@ -23,7 +23,10 @@ User.init({
     role:{
         type:DataTypes.STRING(60),
         allowNull: false,
-        defaultValue: 'user'
+        defaultValue: 'user',
+        validate:{
+            isIn:[['user','validator']]
+        }
     },
     active:{
         type:DataTypes.BOOLEAN,

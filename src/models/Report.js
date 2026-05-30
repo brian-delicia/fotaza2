@@ -6,7 +6,10 @@ class Report extends Model{}
 Report.init({
     target_type:{                          //DENUNCIA  IMAGE O COMMENT
         type:DataTipes.STRING(100),
-        allowNull:false
+        allowNull:false,
+        validate:{
+            isIn:[['image','comment']]
+        }
     },
     reason:{
         type:DataTipes.STRING(100),
@@ -17,11 +20,14 @@ Report.init({
         type:DataTipes.TEXT,
         allowNull:false
     },
-    status:{                             /* pending → pendiente
-                                            dismissed → desestimada
-                                            accepted → aceptada*/
+    status:{                             
         type:DataTipes.STRING(100),      
-        defaultValue:'pending'
+        defaultValue:'pending',
+        validate:{
+            isIn:[['pending','dismissed','accepted']] /*pending → pendiente
+                                                        dismissed → desestimada
+                                                        accepted → aceptada*/
+        }
     }
 },{
     sequelize,

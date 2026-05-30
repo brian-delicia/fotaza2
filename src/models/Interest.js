@@ -8,7 +8,10 @@ Interest.init({
                                     closed → cerrado
                                     cancelled → cancelado*/
         type:DataTypes.STRING(100),
-        defaultValue:'open'
+        defaultValue:'open',
+        validate:{
+            isIn:[['open','closed','cancelled']]
+        }
     }
 },{
     sequelize,

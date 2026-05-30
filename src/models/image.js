@@ -13,7 +13,11 @@ Image.init({
     },
     license:{
         type:DataTypes.STRING(100),
-        allowNull:false
+        allowNull:false,
+        validate:{
+            isIn:[['free','copyright']]
+        }
+
     },
     watermak_text:{
         type:DataTypes.STRING(100),

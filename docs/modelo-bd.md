@@ -1,0 +1,11 @@
+usuarios
+publicaciones
+imagenes
+comentarios
+valoraciones
+seguidores
+notificaciones 
+colecciones
+denuncias
+intereses
+mensajes
