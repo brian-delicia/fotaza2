@@ -51,12 +51,14 @@ exports.login= async (req,res)=>{
             res.render('auth/login',{
                 error:'Usuario no encontrado'
             })
+            return
         }
-        const passwordOk = await bcript.compare(password,user.password);
+        const passwordOk = await bcrypt.compare(password,user.password);
         if(!passwordOk){
             res.render('auth/login',{
                 error:'contraseña incorrecta'
             })
+            return;
         }
         req.session.user={
             id:user.id,
@@ -65,11 +67,13 @@ exports.login= async (req,res)=>{
             role:user.role
         };
         res.redirect('/posts');
+        return;
     }catch(error){
         console.error(error);
         res.render('auth/login',{
             error:'no se pudo iniciar sesion'
-        });
+        })
+        return;
 
     }
 }
