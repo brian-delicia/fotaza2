@@ -1,27 +1,27 @@
-const{Model,DataTipes}=require('sequelize');
+const{Model,DataTypes}=require('sequelize');
 const sequelize=require('../database');
 
 class Report extends Model{}
 
 Report.init({
     target_type:{                          //DENUNCIA  IMAGE O COMMENT
-        type:DataTipes.STRING(100),
+        type:DataTypes.STRING(100),
         allowNull:false,
         validate:{
             isIn:[['image','comment']]
         }
     },
     reason:{
-        type:DataTipes.STRING(100),
+        type:DataTypes.STRING(100),
         allowNull:false
 
     },
     description:{
-        type:DataTipes.TEXT,
+        type:DataTypes.TEXT,
         allowNull:false
     },
     status:{                             
-        type:DataTipes.STRING(100),      
+        type:DataTypes.STRING(100),      
         defaultValue:'pending',
         validate:{
             isIn:[['pending','dismissed','accepted']] /*pending → pendiente

@@ -6,7 +6,7 @@ class User extends Model {}
 
 User.init({
     name:{
-        Type:DataTypes.STRING(60),
+        type:DataTypes.STRING(60),
         allowNull:false
     },
     email:{

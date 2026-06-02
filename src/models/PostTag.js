@@ -1,5 +1,5 @@
 const {Model}=require('sequelize');
-const sequelize=reqquire('../database');
+const sequelize=require('../database');
 
 class PostTag extends Model{}
 

@@ -5,7 +5,7 @@ class Tag extends Model  {}
 
 Tag.init({                             //ETIQUETAS
     name:{
-        Type:DataTypes.STRING(100),
+        type:DataTypes.STRING(100),
         allowNull:false,
         unique:true
     }
