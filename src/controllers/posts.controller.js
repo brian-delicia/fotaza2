@@ -1,5 +1,6 @@
 const {Op, where}=require('sequelize');
-const {User,Post,Image,Tag,Rating,Follow}=require('../models')
+const {User,Post,Image,Tag,Rating,Follow}=require('../models');
+const { findAll } = require('../models/User');
 
 exports.index= async (req,res)=>{
     try {
@@ -175,3 +176,130 @@ exports.showEdit = async (req,res)=>{     //EDITA POST PUBLICACION PERO PRIMERO 
         
     }
 }
+
+exports.update= async (req,res)=>{
+    try {
+        const{title,description,tags}=req.body
+        const post =await Post.findByPk(req.params.id);
+
+        if(!post){
+            res.redirect('/posts')
+            return
+        }
+        if(post.user_id!==req.session.user.id){
+            res.redirect(`/posts/${post.id}`);
+            return
+            
+        }
+        if(post.locked_by_report){
+            res.redirect(`/posts/${post.id}`)
+            return
+
+        }
+        await post.update({
+            title,
+            description
+        })
+        if(tags){
+            const tagNames= tags.split(',').map(tag=>tag.trim().toLowerCase()).filter(tag=>tag.length > 0);
+            //SEPARA LAS ETIQUETAS POR (,) LE SACA LOS ESPACION Y LAS MAYUSCULAS Y FILTRA POR SI HAY ESAPCIOS EN BLACO
+            const newTags=[]
+            for (const tagName of tagNames) {
+                const[tag]= await Tag.findOrCreate({
+                    where:{
+                        name:tagName
+                    }
+                })
+                  newTags.push(tag);
+            };
+            await post.setTags(newTags);
+        }
+        
+            res.redirect(`/posts/${post.id}`)
+
+    } catch (error) {
+        console.error(error)
+        res.redirect('/posts')
+        
+    }
+}
+
+exports.deletePost = async (req,res)=>{
+    try {
+        const post= await Post.findByPk(req.params.id);
+        if(!post){
+            res.redirect('/posts')
+            return
+
+        }
+        if(post.user_id !== req.session.user.id){
+            res.redirect(`/posts/${post.id}`)
+            return
+        }
+        if(post.locked_by_report){
+            res.redirect(`/posts/${post.id}`)
+            return
+        }
+        await post.update({
+            status:'remove'
+        })
+        //NO  BORRA DIRECTAMENTE HACEMOS  BAJA LOGICA
+        res.redirect('/posts')
+
+
+    } catch (error) {
+        console.error(error);
+        res.redirect('/posts')
+
+
+        
+    }
+}
+
+exports.followingfeed = async (req,res)=>{
+    try {
+        const follows= await Follow.findAll({
+            where:{
+                follower_id:req.session.user.id
+            }//BUSCA EN LA TABLA TODOS LOS SEGUIDORES QUE SIGUE EL USUARIO LOGUEADO
+        })
+
+        const followedIds=follows.map(follow=>follow.followed_id);
+        //HACE UN ARREGLO DE TODOS LOS ID DE LAS PERSONAS SEGUIDAS
+        
+        const posts= await Post.findAll({
+            where:{
+                user_id:{
+                    [Op.in]:followedIds
+                },
+                status:'active'
+            },
+            //BUSCA PUBLICACIONES DE LOS ID SEGUIDOS 
+            include:[{
+                model:User,
+                attributes:['id','name']
+            },{
+                model:Image,
+                attributes:['id','license','watermark_text','mime_type']
+            },
+            {model:Tag}
+        ],
+        order:[['created_at','DESC']]
+        });
+        res.render('posts/following',{
+            posts
+
+        })
+
+
+    } catch (error) {
+        console.error(error);
+        res.render('posts/following',
+            {posts:[],
+                error:'no se pudieron cargar publicaciones de usuarios seguidos'
+
+            })
+        
+    }
+}
+

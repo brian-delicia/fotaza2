@@ -22,7 +22,11 @@ Image.init({
     watermak_text:{
         type:DataTypes.STRING(100),
         allowNull:true
-    }
+    },
+    comments_open: {
+  type: DataTypes.BOOLEAN,
+  defaultValue: true
+}
 },{
     sequelize,
     modelName:'Image',
