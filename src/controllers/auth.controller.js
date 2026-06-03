@@ -15,6 +15,7 @@ exports.register = async (req,res)=>{
             res.render('auth/register',{
                 error:'El email ya esta registrado'
             })
+            return;
         }
 
         const hashedPassword= await bcrypt.hash(password,10);
@@ -25,12 +26,13 @@ exports.register = async (req,res)=>{
             role: 'user'
         })
         res.redirect('/login');
+        return;
     }catch(error){
         console.error(error);
         res.render('auth/register',{
             error:'no se pudo registrar el usuario '
         })
-
+            return;
     }
 
 };
@@ -51,7 +53,7 @@ exports.login= async (req,res)=>{
             res.render('auth/login',{
                 error:'Usuario no encontrado'
             })
-            return
+            return;
         }
         const passwordOk = await bcrypt.compare(password,user.password);
         if(!passwordOk){

@@ -17,7 +17,7 @@ exports.showRaw = async (req,res)=>{    //mostrar original
   } catch (error) {
     console.error(error);
     res.status(500).send('eror del servidor al mostrar la imagen ')
-
+    return;
     
   }
 }
@@ -57,11 +57,11 @@ exports.detail = async (req,res)=>{
         let ratingAverage=0;
         if(ratings.length>0){
             const total =ratings.reduce((sum,rating)=>{
-               return sum+rating.value
+               return sum + rating.value
                  },0)
                 ratingAverage= total / ratings.length;
         }
-        res.render('image/detail',{
+        res.render('images/detail',{
             image,
             comments:image.Comments || [],
             ratingAverage,
@@ -80,7 +80,9 @@ exports.detail = async (req,res)=>{
 exports.closeComments = async (req,res)=>{
     try {
         const image= await Image.findByPk(req.params.imageId,{
-            include:[Post]
+            include:[{
+                model:Post
+            }]
         })
         if(!image){
             res.redirect('/posts')
@@ -95,6 +97,7 @@ exports.closeComments = async (req,res)=>{
             comments_open:false
         })
         res.redirect(`/images/${image.id}`)
+        return;
 
     } catch (error) {
         console.error(error)

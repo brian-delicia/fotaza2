@@ -1,13 +1,14 @@
-const {Op, where}=require('sequelize');
+const {Op}=require('sequelize');
 const {User,Post,Image,Tag,Rating,Follow}=require('../models');
-const { findAll } = require('../models/User');
+
 
 exports.index= async (req,res)=>{
     try {
         const user=req.session.user || null
+        
         const includeImage={
             model:Image,
-            attributes:['id','license','watermark_text','mime_type']
+            attributes:['id','license','watermark_text','mime_type','comments_open']
         };
         if(!user){
             includeImage.where={
@@ -35,6 +36,7 @@ exports.index= async (req,res)=>{
         res.render('posts/index',{
             posts
         })
+        return;
      }  catch (error) {
     console.error(error);
 
@@ -42,6 +44,7 @@ exports.index= async (req,res)=>{
       posts: [],
       error: 'No se pudieron cargar las publicaciones'
     });
+    return;
   }
 };
 
@@ -96,6 +99,7 @@ exports.create = async(req,res)=>{
             
         }
         res.redirects(`/posts/${post.id}`)
+        return;
           
        
 
@@ -105,6 +109,7 @@ exports.create = async(req,res)=>{
     res.render('posts/new', {
       error: 'No se pudo crear la publicacion'
     });
+    return;
   }
 };
 exports.detail = async (req,res)=>{
@@ -134,10 +139,14 @@ exports.detail = async (req,res)=>{
                 error:'publicacion no encontrada'})
             return
         }
+         if (!req.session.user) {
+      post.Images = post.Images.filter(image => image.license === 'free');
+    }
         res.render('posts/detail',{
             post
 
         });
+        return;
     } catch (error) {
         console.error(error);
 
@@ -145,14 +154,15 @@ exports.detail = async (req,res)=>{
             post:null,
             error:'no se pudo cargar la publicacion '
         });
+        return;
         
     }
 }
 
-exports.showEdit = async (req,res)=>{     //EDITA POST PUBLICACION PERO PRIMERO HACE VERIFICACIONES
+exports.showEdit = async (req,res)=>{     //muestra ediciones
     try {
         const post= await Post.findByPk(req.params.id,{
-            include:[Tag]
+            include:[Tag,Image]
         });
         if(!post){
             res.redirect('/posts')
@@ -169,10 +179,12 @@ exports.showEdit = async (req,res)=>{     //EDITA POST PUBLICACION PERO PRIMERO 
         res.render('posts/edit',{
             post
         })
+        return;
         
     } catch (error) {
         console.error(error);
         res.redirect('/posts')
+        return;
         
     }
 }
@@ -180,6 +192,7 @@ exports.showEdit = async (req,res)=>{     //EDITA POST PUBLICACION PERO PRIMERO 
 exports.update= async (req,res)=>{
     try {
         const{title,description,tags}=req.body
+
         const post =await Post.findByPk(req.params.id);
 
         if(!post){
@@ -202,7 +215,7 @@ exports.update= async (req,res)=>{
         })
         if(tags){
             const tagNames= tags.split(',').map(tag=>tag.trim().toLowerCase()).filter(tag=>tag.length > 0);
-            //SEPARA LAS ETIQUETAS POR (,) LE SACA LOS ESPACION Y LAS MAYUSCULAS Y FILTRA POR SI HAY ESAPCIOS EN BLACO
+            //SEPARA LAS ETIQUETAS POR (,) RECORRE Y LE SACA LOS ESPACION Y LAS MAYUSCULAS Y FILTRA POR SI HAY ESAPCIOS EN BLACO
             const newTags=[]
             for (const tagName of tagNames) {
                 const[tag]= await Tag.findOrCreate({
@@ -216,10 +229,12 @@ exports.update= async (req,res)=>{
         }
         
             res.redirect(`/posts/${post.id}`)
+            return
 
     } catch (error) {
         console.error(error)
-        res.redirect('/posts')
+        res.redirect('/posts');
+        return;
         
     }
 }
@@ -241,22 +256,24 @@ exports.deletePost = async (req,res)=>{
             return
         }
         await post.update({
-            status:'remove'
+            status:'removed'
         })
         //NO  BORRA DIRECTAMENTE HACEMOS  BAJA LOGICA
-        res.redirect('/posts')
+        res.redirect('/posts');
+        return
 
 
     } catch (error) {
         console.error(error);
         res.redirect('/posts')
+        return;
 
 
         
     }
 }
 
-exports.followingfeed = async (req,res)=>{
+exports.followingfeed = async (req,res)=>{ //USUARIOS QUE SIGO
     try {
         const follows= await Follow.findAll({
             where:{
@@ -280,7 +297,7 @@ exports.followingfeed = async (req,res)=>{
                 attributes:['id','name']
             },{
                 model:Image,
-                attributes:['id','license','watermark_text','mime_type']
+                attributes:['id','license','watermark_text','mime_type','comments_open']
             },
             {model:Tag}
         ],
@@ -290,6 +307,7 @@ exports.followingfeed = async (req,res)=>{
             posts
 
         })
+        return;
 
 
     } catch (error) {
@@ -299,6 +317,7 @@ exports.followingfeed = async (req,res)=>{
                 error:'no se pudieron cargar publicaciones de usuarios seguidos'
 
             })
+            return;
         
     }
 }
