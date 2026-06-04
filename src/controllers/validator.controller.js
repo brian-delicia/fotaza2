@@ -1,6 +1,6 @@
 const {User,Post,Image,Report}=require('../models')
 
-exports.worklist = async (req,res)=>{
+exports.worklist = async (req,res)=>{   //LISTA DE TRABAJO ----PUBLICACIONES DENUNCIADAS
     try {
         const posts=await Post.findAll({
             where:{

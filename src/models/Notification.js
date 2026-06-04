@@ -17,7 +17,7 @@ Notification.init({
         allowNull:false
 
     },
-    read:{
+    read:{                     //leida no leida
         type:DataTypes.BOOLEAN,
         defaultValue:false
     },
