@@ -1,0 +1,157 @@
+const {User,Post,Image,Comment,Report,Notification}=require('../models')
+
+exports.reportImage = async (req,res)=>{
+    try {
+        const imageId= req.params.imageId;
+        const userId = req.session.user.id;
+
+        const{reason, description}=req.body; // reason motivo de denuncia
+
+        if(!reason||!description){
+            res.redirect(`/images/${imageId}`)
+            return;
+        }
+        const image = await Image.findByPk(imageId,{
+            include:[{
+                model:Post
+
+            }]
+        });
+        if(!image){
+            res.redirect('/posts')
+            return;
+        }
+
+        if(image.Post.user_id=== userId){
+            res.redirect(`/images/${image.id}`)
+            return;
+        }
+        const existingReport= await Report.findOne({ //BUSCA SI EL USUARIO YA DENUNCIO LA MISMA IMAGEN
+                                                     //PARA EVITAR REPEETIR LA DENUNCIA 
+            where:{
+                user_id:userId,
+                image_id:image.id,
+                target_type:'image'
+
+            }
+
+        });
+        if(existingReport){
+            res.redirect(`/images/${image.id}`)
+            return;
+        }
+        await Report.create({
+            user_id:userId,
+            image_id:image.id,
+            target_type:'image',
+            reason,
+            description,
+            status:'pending'
+        });
+        await image.Post.update({
+            locked_by_report:true
+
+        });
+        const reportCount=await Report.count({
+            where:{
+                image_id:image.id,
+                target_type:'image',            //CUENTA CUATNOS USUARIOS DISTINTOS DENUNCIARON LA MISMA IMAGEN 
+                status:'pending'
+            },
+            distinct:true,
+            col:'user_id'
+        });
+
+        if(reportCount >=3){
+            await image.Post.update({
+                status:'review'
+            });
+            await Notification.create({
+                user_id:image.Post.user_id,
+                actor_id:userId,
+                type:'report',
+                message:'una de tus publicaciones fue enviada a revision por tener 3 o mas denuncias'
+
+            });
+
+        }
+        res.redirect(`/images/${image.id}`)
+        return;
+
+
+    } catch (error) {
+        console.error(error)
+        res.redirect('/posts')
+        return;
+        
+    }
+}
+
+
+exports.reportComments= async(req,res)=>{
+    try {
+        
+const commentId= req.params.commentId;
+const userId= req.session.user.id;
+
+const {reason,description}=req.body;
+
+if(!reason || !description){
+    res.redirect('/posts')
+    return;
+}
+const comment = await Comment.findByPk(commentId,{
+    include:[{
+        model:Image,
+        include:[{
+            model:Post
+        }]
+    }]
+
+});
+    if(!comment){
+        res.redirect('/posts')
+        return;
+    }
+    if(comment.user_id=== userId){
+        res.redirect(`/images/${comment.Image.id}`)
+        return;
+    }
+    const existingReport=await Report.findOne({
+        where:{
+            user_id:userId,
+            comment_id:comment.id,
+            target_type:'comment'
+        }
+    });
+    if(existingReport){
+        res.redirect(`/images/${comment.Image.id}`)
+        return;
+
+    }
+    await Report.create({
+        user_id:userId,
+        comment_id:comment.id,
+        target_type:'comment',
+        reason,
+        description,
+        status:'pending'
+
+    });
+    await Notification.create({
+        user_id:comment.Image.Post.user_id,
+        actor_id:userId,
+        type:'report',
+        message:'un comentario fue denunciado '
+    });
+    res.redirect(`/images/${comment.Image.id}`)
+    return;
+
+    } catch (error) {
+        console.error(error);
+        res.redirect('/posts')
+        return;
+
+        
+    }
+}
