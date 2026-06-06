@@ -26,7 +26,7 @@ exports.index = async (req,res)=>{
         
     }
 }
-exports.shownew = (req,res)=>{
+exports.showNew = (req,res)=>{
     res.render('collections/new')
     return;
 }
