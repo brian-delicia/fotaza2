@@ -59,6 +59,15 @@ User.belongsToMany(User,{
     otherKey:'follower_id'
 
 })
+Follow.belongsTo(User, {
+  foreignKey: 'follower_id',
+  as: 'followerUser'
+});
+
+Follow.belongsTo(User, {
+  foreignKey: 'followed_id',
+  as: 'followedUser'
+});
 
 // Notificaciones
 User.hasMany(Notification, {foreignKey: 'user_id'});
