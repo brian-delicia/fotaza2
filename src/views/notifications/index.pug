@@ -1,0 +1,33 @@
+extends ../layout
+
+block content
+
+  h1 Notificaciones
+
+  if error
+    p.text-danger= error
+
+  form(method="POST", action="/notifications/read-all")
+    button.btn.btn-secondary(type="submit") Marcar todas como leidas
+
+  if notifications.length === 0
+    p No tenes notificaciones.
+
+  each notification in notifications
+    hr
+
+    p Tipo: #{notification.type}
+
+    if notification.actor
+      p Usuario: #{notification.actor.name}
+
+    p Mensaje: #{notification.message}
+    p Fecha: #{notification.date}
+
+    if notification.read
+      p Estado: Leida
+    else
+      p Estado: No leida
+
+      form(method="POST", action=`/notifications/${notification.id}/read`)
+        button.btn.btn-primary(type="submit") Marcar como leida

@@ -1,0 +1,18 @@
+extends ../layout
+
+block content
+
+  h1 Nueva coleccion
+
+  if error
+    p.text-danger= error
+
+  form(method="POST", action="/collections/new")
+    label Nombre
+    input.form-control.mb-2(type="text", name="name", required)
+
+    button.btn.btn-success(type="submit") Crear coleccion
+
+  br
+
+  a.btn.btn-secondary(href="/collections") Volver

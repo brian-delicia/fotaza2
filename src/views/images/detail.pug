@@ -1,0 +1,94 @@
+extends ../layout
+
+block content
+
+  h1 Detalle de imagen
+
+  if image
+    img(src=`/images/${image.id}/raw`, width="400")
+
+    p Licencia: #{image.license}
+
+    if image.watermark_text
+      p Marca de agua: #{image.watermark_text}
+
+    p Promedio: #{ratingAverage}
+    p Cantidad de valoraciones: #{ratingCount}
+
+    if image.Post
+      p Publicacion:
+        a(href=`/posts/${image.Post.id}`)  #{image.Post.title}
+
+      if image.Post.User
+        p Autor:
+          a(href=`/profile/${image.Post.User.id}`)  #{image.Post.User.name}
+
+    if user
+      h3 Valorar imagen
+
+      form(method="POST", action=`/ratings/images/${image.id}`)
+        select.form-control.mb-2(name="value", required)
+          option(value="1") 1
+          option(value="2") 2
+          option(value="3") 3
+          option(value="4") 4
+          option(value="5") 5
+
+        button.btn.btn-primary(type="submit") Valorar
+
+      h3 Me interesa
+
+      form(method="POST", action=`/interests/images/${image.id}`)
+        button.btn.btn-success(type="submit") Me interesa
+
+      h3 Denunciar imagen
+
+      form(method="POST", action=`/reports/images/${image.id}`)
+        label Motivo
+        input.form-control.mb-2(type="text", name="reason", required)
+
+        label Descripcion
+        textarea.form-control.mb-2(name="description", required)
+
+        button.btn.btn-danger(type="submit") Denunciar
+
+      if image.Post && image.Post.user_id === user.id && image.comments_open
+        form(method="POST", action=`/images/${image.id}/close-comments`)
+          button.btn.btn-warning(type="submit") Cerrar comentarios
+
+    hr
+
+    h3 Comentarios
+
+    if image.comments_open
+      if user
+        form(method="POST", action=`/comments/images/${image.id}`)
+          textarea.form-control.mb-2(name="content", required)
+          button.btn.btn-primary(type="submit") Comentar
+      else
+        p Para comentar debe iniciar sesion.
+    else
+      p Los comentarios estan cerrados.
+
+    if comments && comments.length > 0
+      each comment in comments
+        hr
+        if comment.User
+          p Usuario: #{comment.User.name}
+
+        p= comment.content
+
+        if user && image.Post && comment.user_id !== image.Post.user_id
+          form(method="POST", action=`/reports/comments/${comment.id}`)
+            label Motivo
+            input.form-control.mb-2(type="text", name="reason", required)
+
+            label Descripcion
+            textarea.form-control.mb-2(name="description", required)
+
+            button.btn.btn-danger(type="submit") Denunciar comentario
+    else
+      p No hay comentarios.
+
+  else
+    p Imagen no encontrada

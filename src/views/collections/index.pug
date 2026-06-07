@@ -1,0 +1,20 @@
+extends ../layout
+
+block content
+
+  h1 Mis colecciones
+
+  if error
+    p.text-danger= error
+
+  a.btn.btn-success.mb-3(href="/collections/new") Nueva coleccion
+
+  if collections.length === 0
+    p No tenes colecciones creadas.
+
+  each collection in collections
+    hr
+
+    h3= collection.name
+
+    a.btn.btn-primary(href=`/collections/${collection.id}`) Ver coleccion

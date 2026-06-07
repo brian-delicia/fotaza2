@@ -1,0 +1,29 @@
+extends ../layout
+
+block content
+
+  h1 Comentarios denunciados
+
+  if error
+    p.text-danger= error
+
+  if reports.length === 0
+    p No hay comentarios denunciados.
+
+  each report in reports
+    hr
+
+    p Motivo: #{report.reason}
+    p Descripcion: #{report.description}
+
+    if report.Comment
+      p Comentario: #{report.Comment.content}
+
+      if report.Comment.User
+        p Comentado por: #{report.Comment.User.name}
+
+      if report.Comment.Image
+        a.btn.btn-primary.me-2(href=`/images/${report.Comment.Image.id}`) Ver imagen
+
+      form.d-inline(method="POST", action=`/comments/${report.Comment.id}/delete`)
+        button.btn.btn-danger(type="submit") Borrar comentario

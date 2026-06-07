@@ -1,0 +1,67 @@
+extends ../layout
+
+block content
+
+  h1= collection.name
+
+  form(method="POST", action=`/collections/${collection.id}/edit`)
+    label Cambiar nombre
+    input.form-control.mb-2(type="text", name="name", value=collection.name, required)
+    button.btn.btn-primary(type="submit") Guardar nombre
+
+  form.mt-2(method="POST", action=`/collections/${collection.id}/delete`)
+    button.btn.btn-danger(type="submit") Eliminar coleccion
+
+  hr
+
+  h2 Publicaciones guardadas
+
+  if collection.Posts && collection.Posts.length > 0
+    each post in collection.Posts
+      hr
+
+      h3= post.title
+
+      if post.User
+        p Autor: #{post.User.name}
+
+      if post.Images && post.Images.length > 0
+        img(src=`/images/${post.Images[0].id}/raw`, width="250")
+
+      br
+      br
+
+      a.btn.btn-primary.me-2(href=`/posts/${post.id}`) Ver publicacion
+
+      form.d-inline(method="POST", action=`/collections/${collection.id}/posts/${post.id}/remove`)
+        button.btn.btn-danger(type="submit") Quitar
+  else
+    p No hay publicaciones guardadas.
+
+  hr
+
+  h2 Imagenes guardadas
+
+  if collection.Images && collection.Images.length > 0
+    each image in collection.Images
+      hr
+
+      img(src=`/images/${image.id}/raw`, width="250")
+
+      p Licencia: #{image.license}
+
+      if image.Post
+        p Publicacion:
+          a(href=`/posts/${image.Post.id}`)  Ver publicacion
+
+      a.btn.btn-primary.me-2(href=`/images/${image.id}`) Ver imagen
+
+      form.d-inline(method="POST", action=`/collections/${collection.id}/images/${image.id}/remove`)
+        button.btn.btn-danger(type="submit") Quitar
+  else
+    p No hay imagenes guardadas.
+
+  br
+  br
+
+  a.btn.btn-secondary(href="/collections") Volver
