@@ -1,0 +1,16 @@
+extends ../layout
+
+block content
+  h1 Login
+
+  if error
+    p.text-danger= error
+
+  form(method="POST", action="/login")
+    label Email
+    input.form-control.mb-2(type="email", name="email", required)
+
+    label Contrasena
+    input.form-control.mb-2(type="password", name="password", required)
+
+    button.btn.btn-primary(type="submit") Entrar

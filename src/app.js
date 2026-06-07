@@ -1,9 +1,26 @@
 const express=require('express');
 const session=require('express-session');
-const path=require('path');
-require('dotenv').config();
+const path=require('path');    //MANEJA RUTAS DE CARPETAS
+require('dotenv').config();    // LEER .env
 
 require('./models');
+const authRoutes = require('./routes/auth.routes');
+const postsRoutes = require('./routes/posts.routes');
+const imagesRoutes = require('./routes/images.routes');
+const commentsRoutes = require('./routes/comments.routes');
+const ratingsRoutes = require('./routes/ratings.routes');
+const reportsRoutes = require('./routes/reports.routes');
+const validatorRoutes = require('./routes/validator.routes');
+const followsRoutes = require('./routes/follows.routes');
+const notificationsRoutes = require('./routes/notifications.routes');
+const collectionsRoutes = require('./routes/collections.routes');
+const interestsRoutes = require('./routes/interests.routes');
+const messagesRoutes = require('./routes/messages.routes');
+const profileRoutes = require('./routes/profile.routes');
+const searchRoutes = require('./routes/search.routes');
+
+const {notFound, serverError}=require('./middlewares/error.middleware')
+
 
 const app=express();
 
@@ -17,26 +34,50 @@ app.use(express.urlencoded({  // configura el express para leer formularios
 
 app.use(express.static(path.join(__dirname,'public')));// le  dice a a express que la carpeta public contendra archivos staticos
 
-app.use(session({                       //permite mantener los usuariosloguedos
+app.use(session({                       //permite mantener los usuarios loguedos
     secret:process.env.SESSION_SECRET,
     resave:false,
     saveUninitialized:false,
     cookie:{
         secure:false,     //producion cambiar a true
-        maxAge:24*62*62*1000 //24hs
+        maxAge:1*60*60*1000 //1hs
     }
 }))
 
 app.use((req,res,next) =>{
     res.locals.user= req.session.user || null;
     next();
-})
+});
 
-app.get('/',(req,res)=>{
-    res.redirect('/posts');
-})
+app.get('/', (req, res) => {
+  res.redirect('/posts');
+});
 
-const PORT=process.env.port ||3000;
+app.use('/', authRoutes);
+app.use('/posts', postsRoutes);
+app.use('/images', imagesRoutes);
+app.use('/comments', commentsRoutes);
+app.use('/ratings', ratingsRoutes);
+app.use('/reports', reportsRoutes);
+app.use('/validator', validatorRoutes);
+app.use('/follows', followsRoutes);
+app.use('/notifications', notificationsRoutes);
+app.use('/collections', collectionsRoutes);
+app.use('/interests', interestsRoutes);
+app.use('/messages', messagesRoutes);
+app.use('/profile', profileRoutes);
+app.use('/search', searchRoutes);
+
+
+
+
+
+app.use(notFound);
+app.use(serverError);
+
+
+
+const PORT=process.env.PORT ;
 
 app.listen(PORT,()=>{
     console.log(`servidor funcionando  en el puerto: ${PORT}`)
