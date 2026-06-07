@@ -1,0 +1,54 @@
+extends ../layout
+
+block content
+
+  if error
+    p.text-danger= error
+
+  if post
+    h1= post.title
+
+    if post.User
+      p Autor: #{post.User.name}
+
+    if post.description
+      p= post.description
+
+    h3 Etiquetas
+
+    if post.Tags && post.Tags.length > 0
+      each tag in post.Tags
+        span.badge.bg-secondary.me-1= tag.name
+    else
+      p Sin etiquetas
+
+    h3.mt-3 Imagenes
+
+    if post.Images && post.Images.length > 0
+      each image in post.Images
+        hr
+
+        img(src=`/images/${image.id}/raw`, width="300")
+
+        p Licencia: #{image.license}
+
+        if image.watermark_text
+          p Marca de agua: #{image.watermark_text}
+
+        a.btn.btn-primary.me-2(href=`/images/${image.id}`) Ver imagen
+
+        if user
+          form.d-inline(method="POST", action=`/interests/images/${image.id}`)
+            button.btn.btn-success(type="submit") Me interesa
+    else
+      p Esta publicacion no tiene imagenes visibles.
+
+    if user && user.id === post.user_id && !post.locked_by_report
+      hr
+      a.btn.btn-warning.me-2(href=`/posts/${post.id}/edit`) Editar
+
+      form.d-inline(method="POST", action=`/posts/${post.id}/delete`)
+        button.btn.btn-danger(type="submit") Eliminar
+
+  else
+    p Publicacion no encontrada

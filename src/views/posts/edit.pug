@@ -1,0 +1,24 @@
+extends ../layout
+
+block content
+
+  h1 Editar publicacion
+
+  if error
+    p.text-danger= error
+
+  form(method="POST", action=`/posts/${post.id}/edit`)
+    label Titulo
+    input.form-control.mb-2(type="text", name="title", value=post.title, required)
+
+    label Descripcion
+    textarea.form-control.mb-2(name="description")= post.description
+
+    label Etiquetas separadas por coma
+    input.form-control.mb-2(type="text", name="tags")
+
+    button.btn.btn-primary(type="submit") Guardar cambios
+
+  br
+
+  a.btn.btn-secondary(href=`/posts/${post.id}`) Volver

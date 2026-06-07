@@ -1,0 +1,30 @@
+extends ../layout
+
+block content
+
+  h1 Publicaciones de usuarios que sigo
+
+  if error
+    p.text-danger= error
+
+  if posts.length === 0
+    p Todavia no hay publicaciones de usuarios que seguis.
+
+  each post in posts
+    hr
+
+    h3= post.title
+
+    if post.User
+      p Autor: #{post.User.name}
+
+    if post.description
+      p= post.description
+
+    if post.Images && post.Images.length > 0
+      img(src=`/images/${post.Images[0].id}/raw`, width="250")
+
+    br
+    br
+
+    a.btn.btn-primary(href=`/posts/${post.id}`) Ver publicacion

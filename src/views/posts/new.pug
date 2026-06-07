@@ -1,0 +1,27 @@
+extends ../layout
+
+block content
+
+  h1 Nueva publicacion
+
+  if error
+    p.text-danger= error
+
+  form(method="POST", action="/posts/new", id="postForm")
+    label Titulo
+    input.form-control.mb-2(type="text", name="title", required)
+
+    label Descripcion
+    textarea.form-control.mb-2(name="description")
+
+    label Etiquetas separadas por coma
+    input.form-control.mb-2(type="text", name="tags", placeholder="paisaje, naturaleza", required)
+
+    label Imagenes
+    input.form-control.mb-2(type="file", id="imageFiles", accept="image/png,image/jpeg,image/webp", multiple, required)
+
+    #imagesContainer
+
+    button.btn.btn-success(type="submit") Publicar
+
+  script(src="/js/image-base64.js")

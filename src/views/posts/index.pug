@@ -1,0 +1,32 @@
+extends ../layout
+
+block content
+
+  h1 Publicaciones
+
+  if error
+    p.text-danger= error
+
+  if user
+    a.btn.btn-success.mb-3(href="/posts/new") Nueva publicacion
+
+  if posts.length === 0
+    p No hay publicaciones para mostrar.
+
+  each post in posts
+    hr
+
+    h3= post.title
+
+    if post.User
+      p Autor: #{post.User.name}
+
+    if post.description
+      p= post.description
+
+    if post.Images && post.Images.length > 0
+      img.mb-2(src=`/images/${post.Images[0].id}/raw`, width="250")
+
+    br
+
+    a.btn.btn-primary(href=`/posts/${post.id}`) Ver publicacion
