@@ -1,5 +1,7 @@
 const {User,Post,Image,Comment,Rating }=require('../models');
 
+const calculateAverage =require('../helpers/calculateAverage');
+
 exports.showRaw = async (req,res)=>{    //mostrar original 
   try {
     
@@ -52,15 +54,13 @@ exports.detail = async (req,res)=>{
             return
         }
 
+          //helpers   
         const ratings= image.Ratings || [];
+        const average =calculateAverage(ratings);
 
-        let ratingAverage=0;
-        if(ratings.length>0){
-            const total =ratings.reduce((sum,rating)=>{
-               return sum + rating.value
-                 },0)
-                ratingAverage= total / ratings.length;
-        }
+       
+
+      
         res.render('images/detail',{
             image,
             comments:image.Comments || [],

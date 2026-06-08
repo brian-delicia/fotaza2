@@ -1,5 +1,7 @@
 const {User,Post,Image,Interest,Notification}= require('../models')
 
+const createNotification=require('../helpers/createNotification');
+
 
 exports.index= async (req,res)=>{
     try {
@@ -73,11 +75,9 @@ exports.create  =  async (req,res)=>{
             }
         });
         if(created){
-            await Notification.create({
-                user_id:authorId,
-                actor_id:userId,
-                type:'interest',
-                message:'alguien  marco que le interesa una de tus fotos '            });
+                //helpers 
+        await createNotification(authorId,userId,'interest','marco que le interesa una de tus fotos ');
+           
         }
             res.redirect(`/messages/interests/${interest.id}`)  // SI LE INTERESA ABRE DIRECTO UN CHAT
 

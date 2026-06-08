@@ -1,5 +1,7 @@
 const {User,Follow,Notification}=require('../models')
 
+const createNotification=require('../helpers/createNotification');
+
 exports.follow = async (req,res)=>{
     try {
         const followerId=req.session.user.id;
@@ -29,13 +31,8 @@ exports.follow = async (req,res)=>{
                 follower_id: followerId,
                 followed_id: followedId
              });
-
-        await Notification.create({
-            user_id:followedId,
-            actor_id:followerId,
-            type:'follow',
-            message:'alguien comenzo a seguirte'
-        })
+        await createNotification(followedId,followerId,'follow',' comenzo a seguirte')     
+       
         res.redirect(`/profile/${followedId}`)
         return;
 

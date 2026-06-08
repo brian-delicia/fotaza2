@@ -1,5 +1,6 @@
 const{User,Post,Image,Comment,Report,Notification}=require('../models');
 const {commentSchema}=require('../validations/comment.schema');
+const createNotification = require('../helpers/createNotification');
 
 
 exports.create = async  (req,res)=>{
@@ -36,13 +37,9 @@ exports.create = async  (req,res)=>{
             content:content.trim()
         })
         if(image.Post.user_id !== userId){
-            await Notification.create({
-                user_id:image.Post.user_id,
-                actor_id:userId,
-                type:'comment',
-                message:'alguien  comento tu imagen'
-
-            })
+            //helpers
+        await createNotification(image.Post.user_id,userId,'comment','Comento tu imagen');
+           
         }
         res.redirect(`/images/${image.id}`)
         return;

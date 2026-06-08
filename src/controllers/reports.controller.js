@@ -1,6 +1,7 @@
 const {User,Post,Image,Comment,Report,Notification}=require('../models')
 
 const{reportSchema}=require('../validations/report.schema');
+const createNotification=require('../helpers/createNotification');
 
 
 exports.reportImage = async (req,res)=>{
@@ -70,13 +71,9 @@ exports.reportImage = async (req,res)=>{
             await image.Post.update({
                 status:'review'
             });
-            await Notification.create({
-                user_id:image.Post.user_id,
-                actor_id:userId,
-                type:'report',
-                message:'una de tus publicaciones fue enviada a revision por tener 3 o mas denuncias'
-
-            });
+            //helpers
+        await createNotification(image.Post.user_id,userId,'report','una de tus publicaciones fue enviada a revicion')
+         
 
         }
         res.redirect(`/images/${image.id}`)
@@ -145,12 +142,9 @@ const comment = await Comment.findByPk(commentId,{
         status:'pending'
 
     });
-    await Notification.create({
-        user_id:comment.Image.Post.user_id,
-        actor_id:userId,
-        type:'report',
-        message:'un comentario fue denunciado '
-    });
+    //helpers
+    await createNotification(comment.Image.Post.user_id,userId,'report','un comentario fue denunciado')
+   
     res.redirect(`/images/${comment.Image.id}`)
     return;
 

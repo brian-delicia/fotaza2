@@ -1,6 +1,8 @@
 const {Op}=require('sequelize')
 const {User,Post,Image,Tag,Rating}=require('../models')
 
+const calculateAverage =require('../helpers/calculateAverage');
+
 exports.index = async (req,res )=>{
     try {
         const{q,tag,license,author,minRating}=req.query;
@@ -71,14 +73,7 @@ exports.index = async (req,res )=>{
                 const hasImageWithMinRating = images.some(image=>{
                 const ratings = image.Ratings || [];
 
-                    if(ratings.length===0 ){
-                        return false;
-                    }
-                    const total= ratings.reduce((sum,rating)=>{
-                       return sum + rating.value
-                    },0);
-
-                    const average= total / ratings.length;
+                const average = calculateAverage(ratings);
 
                     return average>=min ;
                 })
