@@ -1,19 +1,20 @@
 const {Post,Image,Rating,Notification}=require('../models')
+const {ratingSchema}=require('../validations/rating.schema')
+
+
 exports.rateImage= async (req,res)=>{  //VALORAR LA IMAGEN
     try {
         const imageId=req.params.imageId
         const userId=req.session.user.id
-        const {value}=req.body;
-        if(!value){
-            res.redirect(`/images/${imageId}`)
-            return;
-        }
-        const numericValue= Number(value);
+        const result = ratingSchema.safeParse(req.body);
 
-        if(numericValue<1||numericValue>5){     //VALIDA PUNTUACION 
+        if(!result.success){
             res.redirect(`/images/${imageId}`)
             return;
+
         }
+        const numericValue = result.data.value;
+
         const image= await Image.findByPk(imageId,{
             include:[{
                 model:Post

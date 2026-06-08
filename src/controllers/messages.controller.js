@@ -1,4 +1,6 @@
 const { User, Post, Image, Interest, Message } = require("../models");
+const {messageShema}=require('../validations/message.schema');
+
 
 exports.index = async (req, res) => {
   //LISTA DE MENSAJES POR INTEREST
@@ -128,11 +130,13 @@ exports.sendMessage = async (req, res) => {
   try {
     const userId = req.session.user.id;
     const interestId = req.params.interestId;
-    const { content } = req.body;
-    if (!content) {
+    
+    const result =messageShema.safeParse(req.body);
+    if (!result.success) {
       res.redirect(`/messages/interests/${interestId}`);
       return;
     }
+    const{content}=result.data;
     const interest = await Interest.findByPk(interestId, {
       include: [
         {

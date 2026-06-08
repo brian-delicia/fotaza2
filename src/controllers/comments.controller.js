@@ -1,15 +1,22 @@
 const{User,Post,Image,Comment,Report,Notification}=require('../models');
+const {commentSchema}=require('../validations/comment.schema');
+
 
 exports.create = async  (req,res)=>{
     try {
         const imageId=req.params.imageId;
         const userId= req.session.user.id;
-        const {content}=req.body;
         
-        if(!content){
-            res.redirect(`/images/${imageId}`)
+        
+        const result = commentSchema.safeParse(req.body);
+        if(!result.success){
+            res.redirect(`/images${imageId}`)
             return;
         }
+        const {content}=result.data;
+
+        
+    
         const image=await Image.findByPk(imageId,{
             include:[{
                 model:Post

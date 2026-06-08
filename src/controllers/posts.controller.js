@@ -1,6 +1,8 @@
 const {Op}=require('sequelize');
 const {User,Post,Image,Tag,Rating,Follow}=require('../models');
 
+const {postSchema}=require('../validations/post.schema');
+
 
 exports.index= async (req,res)=>{
     try {
@@ -55,16 +57,25 @@ exports.showNew =(req,res)=>{
 exports.create = async(req,res)=>{
     try {
         const{title,description,tags,image_base64,mime_type,license,watermark_text}=req.body;
-        if(!title||!tags||!image_base64||!mime_type||!license){
+        const result= postSchema.safeParse({ title,description,tags });
+        if(!result.success){
             res.render('posts/new',{
-                error:'debe completar titulo,etiquetas,imagen,licencia'
+                error:result.error.issues[0].message
+            })
+            return;
+        }
+        if(!image_base64||!mime_type||!license){
+            res.render('posts/new',{
+                error:'debe completar imagen, o licencia'
              })
             return;
         }
+
+        const validData=result.data;
         const post= await Post.create({
             user_id:req.session.user.id,
-            title,
-            description
+            title:validData.title,
+            description:validData.description
         })
         const imageList= Array.isArray(image_base64) ? image_base64 :[image_base64]
         /*Si image_base64 ya es un arreglo
@@ -88,7 +99,7 @@ exports.create = async(req,res)=>{
                 watermark_text:watermarkList[i] || null
             })
          };
-         const tagNames= tags.split(',').map(tag=> tag.trim().toLowerCase()).filter(tag=>tag.length>0)
+         const tagNames= validData.tags.split(',').map(tag=> tag.trim().toLowerCase()).filter(tag=>tag.length>0)
         for (const tagName of tagNames) {
             const[tag]=await Tag.findOrCreate({ //Buscar o crear
                 where:{
@@ -193,6 +204,12 @@ exports.update= async (req,res)=>{
     try {
         const{title,description,tags}=req.body
 
+        const result= postSchema.safeParse({title,description,tags });
+        if(!result.success){
+            res.redirect(`/pots/${req.params.id}/edit`);
+        }
+        const validData=result.data;
+
         const post =await Post.findByPk(req.params.id);
 
         if(!post){
@@ -210,10 +227,10 @@ exports.update= async (req,res)=>{
 
         }
         await post.update({
-            title,
-            description
+            title:validData.title,
+            description:validData.description
         })
-        if(tags){
+        if(validData.tags){
             const tagNames= tags.split(',').map(tag=>tag.trim().toLowerCase()).filter(tag=>tag.length > 0);
             //SEPARA LAS ETIQUETAS POR (,) RECORRE Y LE SACA LOS ESPACION Y LAS MAYUSCULAS Y FILTRA POR SI HAY ESAPCIOS EN BLACO
             const newTags=[]

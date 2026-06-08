@@ -1,16 +1,20 @@
 const {User,Post,Image,Comment,Report,Notification}=require('../models')
 
+const{reportSchema}=require('../validations/report.schema');
+
+
 exports.reportImage = async (req,res)=>{
     try {
         const imageId= req.params.imageId;
         const userId = req.session.user.id;
 
-        const{reason, description}=req.body; // reason motivo de denuncia
-
-        if(!reason||!description){
+       const result = reportSchema.safeParse(req.body);
+        if(!result.success){
             res.redirect(`/images/${imageId}`)
             return;
         }
+        const { reason, description } = result.data;
+
         const image = await Image.findByPk(imageId,{
             include:[{
                 model:Post
@@ -93,13 +97,16 @@ exports.reportComments= async(req,res)=>{
         
 const commentId= req.params.commentId;
 const userId= req.session.user.id;
+const result= reportSchema.safeParse(req.body)
 
-const {reason,description}=req.body;
 
-if(!reason || !description){
+
+if(!result.success){
     res.redirect('/posts')
     return;
 }
+const {reason,description}=result.data;
+
 const comment = await Comment.findByPk(commentId,{
     include:[{
         model:Image,

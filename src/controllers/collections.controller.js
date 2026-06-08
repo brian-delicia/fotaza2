@@ -1,4 +1,7 @@
+const { Result } = require('pg');
 const {Collection,Post,Image,User}=require('../models')
+const {collectionSchema}=require('../validations/collection.schema');
+
 
 exports.index = async (req,res)=>{
     try {
@@ -33,14 +36,14 @@ exports.showNew = (req,res)=>{
 
 exports.create = async (req,res)=>{
     try {
-        const {name}= req.body;
-        
-        if(!name){
+        const result=collectionSchema.safeParse(req.body);
+        if(!result.success){
             res.render('collections/new',{
-                error:'Debe ingresar un nombre'
+                error:result.error.issues[0].message
             })
             return;
         }
+        const{name}=result.data;
 
         await Collection.create({
             user_id:req.session.user.id,
@@ -113,7 +116,12 @@ exports.detail = async (req,res)=>{
 
 exports.update = async (req,res)=>{ // EDITA SOLO EL NOMBRE DE LA COLECCION
     try {
-        const {name}= req.body;
+        const result=collectionSchema.safeParse(req.body);
+        if(!result.success){
+            res.redirect(`/collections/${req.params.id}`)
+            return;
+        }
+        const {name}=result.data;
 
         const collection= await  Collection.findOne({
             where:{

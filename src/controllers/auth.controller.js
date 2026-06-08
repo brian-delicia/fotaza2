@@ -1,5 +1,6 @@
 const bcrypt=require('bcrypt');
 const {User}=require('../models')
+const {registerSchema,loginSchema}=require('../validations/auth.schema')
 
 exports.showRegister = (req,res)=>{
     res.render('auth/register');
@@ -7,7 +8,14 @@ exports.showRegister = (req,res)=>{
 
 exports.register = async (req,res)=>{
     try{
-        const {name,email,password}=req.body;
+        const result=registerSchema.safeParse(req.body);
+        if(!result.success){
+            res.render('auth/register',{
+                error:result.error.issues[0].message
+            })
+            return;
+        }
+        const {name,email,password}=result.data;
         const existingUser = await User.findOne({
             where:{email}
         })
@@ -42,7 +50,15 @@ exports.showLogin = (req,res)=>{
 }
 exports.login= async (req,res)=>{
     try{
-        const{email,password}=req.body;
+        const result = loginSchema.safeParse(req.body);
+
+        if(!result.success){
+            res.render('auth/login',{
+                error:result.error.issues[0].message
+            })
+            return;
+        }
+        const{email,password}=result.data;
         const user= await User.findOne({
             where:{
                 email,
