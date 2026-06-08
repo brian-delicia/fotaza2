@@ -1,0 +1,41 @@
+extends ../layout
+
+block content
+
+  h1 Mis intereses
+
+  if error
+    p.text-danger= error
+
+  if interests.length === 0
+    p No registraste intereses.
+
+  each interest in interests
+
+    hr
+
+    if interest.Image
+      img(
+        src=`/images/${interest.Image.id}/raw`
+        width="250"
+      )
+
+      p Estado: #{interest.status}
+
+      if interest.Image.Post
+        a.btn.btn-primary.me-2(
+          href=`/posts/${interest.Image.Post.id}`
+        ) Ver publicacion
+
+      a.btn.btn-success.me-2(
+        href=`/messages/interests/${interest.id}`
+      ) Conversacion
+
+      if interest.status === 'open'
+        form.d-inline(
+          method="POST"
+          action=`/interests/${interest.id}/close`
+        )
+          button.btn.btn-danger(
+            type="submit"
+          ) Cerrar interes

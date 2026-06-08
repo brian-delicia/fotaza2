@@ -1,0 +1,50 @@
+extends ../layout
+
+block content
+
+  h1 Conversacion
+
+  if interest.Image
+    p Imagen:
+      a(href=`/images/${interest.Image.id}`) Ver imagen
+
+  if interest.Image && interest.Image.Post && interest.Image.Post.User
+    p Autor: #{interest.Image.Post.User.name}
+
+  hr
+
+  if interest.Messages && interest.Messages.length > 0
+
+    each message in interest.Messages
+
+      p
+        strong #{message.sender.name}:
+
+      p= message.content
+
+      p.text-muted= message.created_at
+
+      hr
+
+  else
+    p No hay mensajes.
+
+  form(
+    method="POST"
+    action=`/messages/interests/${interest.id}`
+  )
+
+    textarea.form-control.mb-2(
+      name="content"
+      required
+    )
+
+    button.btn.btn-success(
+      type="submit"
+    ) Enviar mensaje
+
+  br
+
+  a.btn.btn-secondary(
+    href="/messages"
+  ) Volver

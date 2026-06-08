@@ -1,0 +1,21 @@
+extends ../layout
+
+block content
+
+  h1 Usuarios que sigue #{profileUser.name}
+
+  if following.length === 0
+    p Este usuario no sigue a nadie.
+
+  each follow in following
+    hr
+
+    if follow.followedUser
+      p Nombre: #{follow.followedUser.name}
+      p Email: #{follow.followedUser.email}
+
+      a.btn.btn-primary(href=`/profile/${follow.followedUser.id}`) Ver perfil
+
+  br
+
+  a.btn.btn-secondary(href=`/profile/${profileUser.id}`) Volver

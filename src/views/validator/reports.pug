@@ -1,0 +1,32 @@
+extends ../layout
+
+block content
+
+  h1 Publicaciones en revision
+
+  if error
+    p.text-danger= error
+
+  if posts.length === 0
+    p No hay publicaciones en revision.
+
+  each post in posts
+    hr
+
+    h3= post.title
+
+    if post.User
+      p Autor: #{post.User.name}
+      p Email: #{post.User.email}
+      p Publicaciones bajadas: #{post.User.removed_posts_count}
+
+    if post.Images && post.Images.length > 0
+      each image in post.Images
+        img(src=`/images/${image.id}/raw`, width="200")
+
+        if image.Reports
+          p Denuncias: #{image.Reports.length}
+
+    br
+
+    a.btn.btn-primary(href=`/validator/posts/${post.id}`) Ver detalle

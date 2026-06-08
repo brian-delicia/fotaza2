@@ -12,10 +12,7 @@ class Post extends Model {}
     allowNull:true,
     
 },
-    comments_open:{                   //SIRVE PARA DESABILITAR LOS COMENTARIOS
-        type:DataTypes.BOOLEAN,
-        defaultValue:true
-        },
+   
 
     status:{
         type:DataTypes.STRING(100),                      

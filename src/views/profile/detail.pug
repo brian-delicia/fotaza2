@@ -1,0 +1,49 @@
+extends ../layout
+
+block content
+
+  h1 Perfil de usuario
+
+  if profileUser
+    p Nombre: #{profileUser.name}
+    p Email: #{profileUser.email}
+
+    p Seguidores: #{followersCount}
+    p Seguidos: #{followingCount}
+
+    a.btn.btn-secondary.me-2(href=`/profile/${profileUser.id}/followers`) Ver seguidores
+    a.btn.btn-secondary.me-2(href=`/profile/${profileUser.id}/following`) Ver seguidos
+
+    if user && user.id !== profileUser.id
+      if isFollowing
+        form.d-inline(method="POST", action=`/follows/${profileUser.id}/unfollow`)
+          button.btn.btn-danger(type="submit") Dejar de seguir
+      else
+        form.d-inline(method="POST", action=`/follows/${profileUser.id}`)
+          button.btn.btn-success(type="submit") Seguir
+
+    hr
+
+    h2 Publicaciones
+
+    if posts.length === 0
+      p Este usuario no tiene publicaciones.
+
+    each post in posts
+      hr
+
+      h3= post.title
+
+      if post.description
+        p= post.description
+
+      if post.Images && post.Images.length > 0
+        img(src=`/images/${post.Images[0].id}/raw`, width="250")
+
+      br
+      br
+
+      a.btn.btn-primary(href=`/posts/${post.id}`) Ver publicacion
+
+  else
+    p Usuario no encontrado

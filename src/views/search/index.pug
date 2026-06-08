@@ -1,0 +1,61 @@
+extends ../layout
+
+block content
+
+  h1 Buscador
+
+  if error
+    p.text-danger= error
+
+  form(method="GET", action="/search")
+    label Texto
+    input.form-control.mb-2(type="text", name="q", value=filters.q)
+
+    label Etiqueta
+    input.form-control.mb-2(type="text", name="tag", value=filters.tag)
+
+    label Autor
+    input.form-control.mb-2(type="text", name="author", value=filters.author)
+
+    label Licencia
+    select.form-control.mb-2(name="license")
+      option(value="") Todas
+      option(value="free", selected=filters.license === 'free') Sin copyright
+      option(value="copyright", selected=filters.license === 'copyright') Con copyright
+
+    label Valoracion minima
+    select.form-control.mb-2(name="minRating")
+      option(value="") Cualquiera
+      option(value="1", selected=filters.minRating === '1') 1
+      option(value="2", selected=filters.minRating === '2') 2
+      option(value="3", selected=filters.minRating === '3') 3
+      option(value="4", selected=filters.minRating === '4') 4
+      option(value="5", selected=filters.minRating === '5') 5
+
+    button.btn.btn-primary(type="submit") Buscar
+
+  hr
+
+  h2 Resultados
+
+  if posts.length === 0
+    p No se encontraron resultados.
+
+  each post in posts
+    hr
+
+    h3= post.title
+
+    if post.User
+      p Autor: #{post.User.name}
+
+    if post.description
+      p= post.description
+
+    if post.Images && post.Images.length > 0
+      img(src=`/images/${post.Images[0].id}/raw`, width="250")
+
+    br
+    br
+
+    a.btn.btn-primary(href=`/posts/${post.id}`) Ver publicacion

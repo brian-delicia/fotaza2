@@ -1,0 +1,25 @@
+extends ../layout
+
+block content
+
+  h1 Conversaciones
+
+  if error
+    p.text-danger= error
+
+  if interests.length === 0
+    p No tenes conversaciones.
+
+  each interest in interests
+    hr
+
+    if interest.Image
+      p Imagen relacionada:
+      a(href=`/images/${interest.Image.id}`) Ver imagen
+
+    if interest.Image && interest.Image.Post && interest.Image.Post.User
+      p Autor: #{interest.Image.Post.User.name}
+
+    a.btn.btn-primary(
+      href=`/messages/interests/${interest.id}`
+    ) Abrir conversacion

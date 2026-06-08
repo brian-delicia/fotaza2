@@ -1,0 +1,52 @@
+extends ../layout
+
+block content
+
+  h1 Revision de publicacion
+
+  if post
+    h2= post.title
+
+    if post.User
+      p Autor: #{post.User.name}
+      p Email: #{post.User.email}
+      p Publicaciones bajadas: #{post.User.removed_posts_count}
+
+    if post.Images && post.Images.length > 0
+      each image in post.Images
+        hr
+
+        img(src=`/images/${image.id}/raw`, width="300")
+
+        p Licencia: #{image.license}
+
+        if image.watermark_text
+          p Marca de agua: #{image.watermark_text}
+
+        h3 Denuncias
+
+        if image.Reports && image.Reports.length > 0
+          each report in image.Reports
+            p Motivo: #{report.reason}
+            p Descripcion: #{report.description}
+
+            if report.User
+              p Denunciado por: #{report.User.name}
+
+            hr
+        else
+          p Sin denuncias.
+
+    form.d-inline(method="POST", action=`/validator/posts/${post.id}/remove`)
+      button.btn.btn-danger(type="submit") Dar de baja publicacion
+
+    form.d-inline(method="POST", action=`/validator/posts/${post.id}/dismiss`)
+      button.btn.btn-success(type="submit") Desestimar denuncias
+
+    br
+    br
+
+    a.btn.btn-secondary(href="/validator/reports") Volver
+
+  else
+    p Publicacion no encontrada

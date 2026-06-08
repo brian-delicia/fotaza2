@@ -1,0 +1,21 @@
+extends ../layout
+
+block content
+
+  h1 Seguidores de #{profileUser.name}
+
+  if followers.length === 0
+    p Este usuario no tiene seguidores.
+
+  each follow in followers
+    hr
+
+    if follow.followerUser
+      p Nombre: #{follow.followerUser.name}
+      p Email: #{follow.followerUser.email}
+
+      a.btn.btn-primary(href=`/profile/${follow.followerUser.id}`) Ver perfil
+
+  br
+
+  a.btn.btn-secondary(href=`/profile/${profileUser.id}`) Volver
