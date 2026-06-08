@@ -19,7 +19,7 @@ Image.init({
         }
 
     },
-    watermak_text:{
+    watermark_text:{
         type:DataTypes.STRING(100),
         allowNull:true
     },

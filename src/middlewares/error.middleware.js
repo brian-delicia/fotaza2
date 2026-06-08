@@ -1,6 +1,6 @@
 function notFound(req,res){
     
-    res.status(404).render('/errors/404');
+    res.status(404).render('errors/404');
     return
 }
 function  serverError(error,req,res,next){

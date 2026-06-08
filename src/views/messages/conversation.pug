@@ -18,8 +18,10 @@ block content
     each message in interest.Messages
 
       p
-        strong #{message.sender.name}:
-
+        if message.sender
+          strong #{message.sender.name}:
+        else
+          strong Usuario:
       p= message.content
 
       p.text-muted= message.created_at

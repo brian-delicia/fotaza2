@@ -273,7 +273,7 @@ exports.deletePost = async (req,res)=>{
     }
 }
 
-exports.followingfeed = async (req,res)=>{ //USUARIOS QUE SIGO
+exports.followingFeed = async (req,res)=>{ //USUARIOS QUE SIGO
     try {
         const follows= await Follow.findAll({
             where:{
