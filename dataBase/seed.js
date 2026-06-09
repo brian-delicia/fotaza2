@@ -7,17 +7,52 @@ const {User,Collection}=require('../src/models');
 async function seedDatabase(){
     try{
         await sequelize.authenticate();
-        const password= await bcript.hash('123456',10)
+       const password = await bcrypt.hash('123456', 10);
 
-        const [demoUser]=await User.findOrCreate({
-            where:{email:'demo@email.com'},
-            defaults:{
-                name:'Usuario demo',
-                email:'demo@email.com',
-                password,
-                role:'user'
+       const users  = [
+           {
+            name: 'brian delicia',
+            email: 'brian@email.com'
+           },
+           {
+           name: 'aldana perez',
+            email: 'aldana@email.com'
+           },
+           {
+            name: 'steven flores',
+           email: 'steven@email.com'
+           },
+           {
+            name: 'sabrina villegas',
+            email: 'sabrina@email.com'
+            },
+           {
+           name: 'sandra andrada',
+           email: 'sandra@email.com'
+           }
+       ];
+
+          const createdUsers= [];
+
+        for (const user of users) {
+
+          const [newUser] = await User.findOrCreate({
+
+            where: {
+            email: user.email
+            },
+
+            defaults: {
+              name: user.name,
+              email: user.email,
+              password,
+              role: 'user'
             }
-        })
+
+          });
+
+          createdUsers.push(newUser);
+         }
          const [validatorUser]=await User.findOrCreate({
             where:{email:'validador@email.com'},
             defaults:{
@@ -29,16 +64,20 @@ async function seedDatabase(){
 
             }
         });
-         await Collection.findOrCreate({
-      where: {
+        for (const user of createdUsers) {
+
+        await Collection.findOrCreate({
+        where: {
+         name: 'Favoritos',
+         user_id: user.id
+       },
+        defaults: {
         name: 'Favoritos',
-        user_id: demoUser.id
-      },
-      defaults: {
-        name: 'Favoritos',
-        user_id: demoUser.id
-      }
-    });
+        user_id: user.id
+       }
+     });
+
+     }
 
         console.log('datos cargados correctamente')
         process.exit();

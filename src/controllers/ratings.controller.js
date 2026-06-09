@@ -1,4 +1,4 @@
-const {Post,Image,Rating,Notification}=require('../models')
+const {Post,Image,Rating}=require('../models')
 const {ratingSchema}=require('../validations/rating.schema')
 
 const createNotification=require('../helpers/createNotification');
@@ -49,7 +49,7 @@ exports.rateImage= async (req,res)=>{  //VALORAR LA IMAGEN
 
         });
         //helpers
-        await createNotification(image.Post.user_id,userId,'rating',' valorizo una de tus imagenes');
+        await createNotification(image.Post.user_id,userId,'rating','valorizo una de tus imagenes');
      
         res.redirect(`/images/${image.id}`)
             return

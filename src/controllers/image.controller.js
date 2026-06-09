@@ -53,6 +53,10 @@ exports.detail = async (req,res)=>{
             res.render('errors/404');
             return
         }
+        if (!req.session.user && image.license !== 'free') {
+           res.redirect('/posts');
+           return;
+          }
 
           //helpers   
         const ratings= image.Ratings || [];
@@ -64,7 +68,7 @@ exports.detail = async (req,res)=>{
         res.render('images/detail',{
             image,
             comments:image.Comments || [],
-            ratingAverage,
+            ratingAverage:average,
             ratingCount:ratings.length
             
         }
@@ -101,7 +105,7 @@ exports.closeComments = async (req,res)=>{
 
     } catch (error) {
         console.error(error)
-        res.redirect('posts')
+        res.redirect('/posts')
         return
     }
 }

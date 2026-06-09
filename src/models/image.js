@@ -32,7 +32,8 @@ Image.init({
     modelName:'Image',
     tableName:'images',
     timestamps:true,
-    createdAt: 'created_at'
+    createdAt: 'created_at',
+    paranoid:true
 });
 
 module.exports=Image;

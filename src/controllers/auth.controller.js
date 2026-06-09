@@ -38,7 +38,7 @@ exports.register = async (req,res)=>{
     }catch(error){
         console.error(error);
         res.render('auth/register',{
-            error:'no se pudo registrar el usuario '
+            error:'No se pudo registrar el usuario '
         })
             return;
     }
@@ -74,7 +74,7 @@ exports.login= async (req,res)=>{
         const passwordOk = await bcrypt.compare(password,user.password);
         if(!passwordOk){
             res.render('auth/login',{
-                error:'contraseña incorrecta'
+                error:'Contraseña incorrecta'
             })
             return;
         }
@@ -89,7 +89,7 @@ exports.login= async (req,res)=>{
     }catch(error){
         console.error(error);
         res.render('auth/login',{
-            error:'no se pudo iniciar sesion'
+            error:'No se pudo iniciar sesion'
         })
         return;
 

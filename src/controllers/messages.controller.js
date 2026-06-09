@@ -1,5 +1,5 @@
 const { User, Post, Image, Interest, Message } = require("../models");
-const {messageShema}=require('../validations/message.schema');
+const {messageSchema}=require('../validations/message.schema');
 
 
 exports.index = async (req, res) => {
@@ -30,7 +30,7 @@ exports.index = async (req, res) => {
       order: [["created_at", "DESC"]],
     });
     const filteredInterests = interest.filter((interest) => {
-      const interestedUserId = interest.User.id;
+      const interestedUserId = interest.User_id;
       const authorId = interest.Image.Post.user_id;
       return interestedUserId === userId || authorId === userId; //SI  //SOY QUIEN MARCO EL INTEREST
     }); //SOY EL DUEÑO DE LA FOTO
@@ -44,7 +44,7 @@ exports.index = async (req, res) => {
     console.error(error);
     res.render("messages/index", {
       interests: [],
-      error: "no se pudieron cargar las conversaciones",
+      error: "No se pudieron cargar las conversaciones",
     });
     return;
   }
@@ -76,6 +76,8 @@ exports.conversation = async (req, res) => {
         },
         {
           model: Message,
+           separate: true,
+           order: [['created_at', 'ASC']],
           include: [
             {
               model: User,
@@ -89,8 +91,8 @@ exports.conversation = async (req, res) => {
             },
           ],
         },
-      ],
-      order: [[Message, "created_at", "ASC"]],
+      ]
+      
     });
     if (!interest) {
       res.redirect("/messages");
@@ -131,7 +133,8 @@ exports.sendMessage = async (req, res) => {
     const userId = req.session.user.id;
     const interestId = req.params.interestId;
     
-    const result =messageShema.safeParse(req.body);
+    const result =messageSchema.safeParse(req.body);
+
     if (!result.success) {
       res.redirect(`/messages/interests/${interestId}`);
       return;

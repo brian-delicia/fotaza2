@@ -1,4 +1,4 @@
-const {User,Post,Image,Interest,Notification}= require('../models')
+const {User,Post,Image,Interest}= require('../models')
 
 const createNotification=require('../helpers/createNotification');
 
@@ -47,7 +47,8 @@ exports.create  =  async (req,res)=>{
         const image = await Image.findByPk(imageId,{
             include:[{
                 model:Post,
-                include:[{User,
+                include:[{
+                model:User,
                 attributes:['id','name','email']
                 }]
 
@@ -79,7 +80,7 @@ exports.create  =  async (req,res)=>{
         await createNotification(authorId,userId,'interest','marco que le interesa una de tus fotos ');
            
         }
-            res.redirect(`/messages/interests/${interest.id}`)  // SI LE INTERESA ABRE DIRECTO UN CHAT
+           return res.redirect(`/messages/interests/${interest.id}`)  // SI LE INTERESA ABRE DIRECTO UN CHAT
 
     } catch (error) {
         console.error(error)

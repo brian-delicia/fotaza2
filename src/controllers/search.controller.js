@@ -67,6 +67,8 @@ exports.index = async (req,res )=>{
         let filteredPosts=posts;
         if(minRating){                                  //filtra por rating minnimos 
             const min = Number(minRating);
+            if(!isNaN(min)){
+
             filteredPosts= posts.filter(post =>{
                 const images = post.Images || [];
 
@@ -81,7 +83,7 @@ exports.index = async (req,res )=>{
                 return hasImageWithMinRating;
 
             })
-        }
+        }}
         return res.render('search/index',{
             posts:filteredPosts,
             filters:{ q, tag, license, author, minRating}

@@ -5,7 +5,7 @@ const validatorController= require('../controllers/validator.controller');
 const {requireLogin }= require('../middlewares/auth.middleware');
 const {requireRole}= require('../middlewares/role.middleware');
 
-router.get('/reports',requireLogin,requireRole('validator'),validatorController.worklist);
+router.get('/reports',requireLogin,requireRole('validator'),validatorController.workList);
 
 router.get('/posts/:postId',requireLogin,requireRole('validator'),validatorController.postDetail);
 

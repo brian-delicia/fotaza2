@@ -1,4 +1,4 @@
-const{User,Post,Image,Comment,Report,Notification}=require('../models');
+const{User,Post,Image,Comment,Report}=require('../models');
 const {commentSchema}=require('../validations/comment.schema');
 const createNotification = require('../helpers/createNotification');
 
@@ -11,7 +11,7 @@ exports.create = async  (req,res)=>{
         
         const result = commentSchema.safeParse(req.body);
         if(!result.success){
-            res.redirect(`/images${imageId}`)
+            res.redirect(`/images/${imageId}`)
             return;
         }
         const {content}=result.data;
@@ -134,7 +134,7 @@ exports.deleteComment = async (req,res)=>{
             }
         });
 
-        res.redirect('/comments/reported')
+       return res.redirect('/comments/reported')
 
     } catch (error) {
         console.error(error);

@@ -1,36 +1,43 @@
-const{Model,DataTypes}=require('sequelize');
-const sequelize=require('../database');
+const { Model, DataTypes } = require("sequelize");
+const sequelize = require("../database");
 
-class Notification extends Model{}
+class Notification extends Model {}
 
-Notification.init({
-    type:{                                   /* type:   comment → comentario
+Notification.init(
+  {
+    type: {
+                                                       /* comment->comentarios
                                                         rating → valoración
                                                         interest → me interesa
                                                         follow → seguimiento
                                                         report → denuncia*/
-        type:DataTypes.STRING(100),
-        allowNull:false
-    }, 
-    message:{
-        type:DataTypes.TEXT,
-        allowNull:false
+      type: DataTypes.STRING(100),
+      allowNull: false,
 
+      validate: {
+        isIn: [["comment", "rating", "interest", "follow", "report"]],
+      },
     },
-    read:{                     //leida no leida
-        type:DataTypes.BOOLEAN,
-        defaultValue:false
+    message: {
+      type: DataTypes.TEXT,
+      allowNull: false,
     },
-     date: {
-    type: DataTypes.DATE,
-    defaultValue: DataTypes.NOW
-  }
-},{
+    read: {
+      //leida no leida
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    date: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+  },
+  {
     sequelize,
-    modelName:'Notification',
-    tableName:'notifications',
-    timestamps:false,
-   
-});
+    modelName: "Notification",
+    tableName: "notifications",
+    timestamps: false,
+  },
+);
 
-module.exports=Notification;
+module.exports = Notification;

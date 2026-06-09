@@ -87,7 +87,12 @@ exports.create = async(req,res)=>{
          const watermarkList = Array.isArray(watermark_text)? watermark_text:[watermark_text]
          
          for (let i = 0; i < imageList.length; i++) {
+
+            if (!imageList[i] || !imageList[i].includes(',')) {
+              continue;
+            }
             const base64Data= imageList[i].split(',')[1];
+            
             const imageBuffer = Buffer.from(base64Data,'base64'); /* Buffer convierte: texto base64  en:bytes reales de la imagen*/
 
             await Image.create({
@@ -109,12 +114,11 @@ exports.create = async(req,res)=>{
             await post.addTag(tag);
             
         }
-        res.redirects(`/posts/${post.id}`)
-        return;
-          
        
-
-    } catch (error) {
+       
+        return res.redirect(`/posts/${post.id}`)
+        
+   } catch (error) {
     console.error(error);
 
     res.render('posts/new', {
@@ -206,8 +210,10 @@ exports.update= async (req,res)=>{
 
         const result= postSchema.safeParse({title,description,tags });
         if(!result.success){
-            res.redirect(`/pots/${req.params.id}/edit`);
+            res.redirect(`/posts/${req.params.id}/edit`)
+         return;
         }
+       
         const validData=result.data;
 
         const post =await Post.findByPk(req.params.id);
@@ -231,7 +237,7 @@ exports.update= async (req,res)=>{
             description:validData.description
         })
         if(validData.tags){
-            const tagNames= tags.split(',').map(tag=>tag.trim().toLowerCase()).filter(tag=>tag.length > 0);
+            const tagNames= validData.tags.split(',').map(tag=>tag.trim().toLowerCase()).filter(tag=>tag.length > 0);
             //SEPARA LAS ETIQUETAS POR (,) RECORRE Y LE SACA LOS ESPACION Y LAS MAYUSCULAS Y FILTRA POR SI HAY ESAPCIOS EN BLACO
             const newTags=[]
             for (const tagName of tagNames) {

@@ -15,7 +15,7 @@ Comment.init({
 
 },{
     sequelize,
-    modelName:'Comments',
+    modelName:'Comment',
     tableName:'comments',
     timestamps:true,
     createdAt:'created_at',

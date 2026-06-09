@@ -1,4 +1,4 @@
-const {User,Post,Image,Comment,Report,Notification}=require('../models')
+const {Post,Image,Comment,Report}=require('../models')
 
 const{reportSchema}=require('../validations/report.schema');
 const createNotification=require('../helpers/createNotification');
@@ -67,7 +67,7 @@ exports.reportImage = async (req,res)=>{
             col:'user_id'
         });
 
-        if(reportCount >=3){
+        if(reportCount >3){
             await image.Post.update({
                 status:'review'
             });

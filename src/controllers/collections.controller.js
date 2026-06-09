@@ -1,4 +1,4 @@
-const { Result } = require('pg');
+
 const {Collection,Post,Image,User}=require('../models')
 const {collectionSchema}=require('../validations/collection.schema');
 
@@ -192,8 +192,13 @@ exports.addPost = async (req,res)=>{     //AGREGA PUBLICACION A A COLECCION
             res.redirect('/posts')
             return;
         }
+        const alreadySaved = await collection.hasPost(post);
 
-        await collection.addPost(post)  //MODIFICA LA TABLA INTERMEDIA 
+            if (!alreadySaved) { //modifica laa tabla intermedia
+            await collection.addPost(post);
+          }
+
+        
 
         res.redirect(`/collections/${collection.id}`)
         return;
@@ -222,8 +227,13 @@ exports.addImage= async(req,res)=>{
             res.redirect('/posts')
             return;
         }
+        const alreadySaved = await collection.hasPost(post);
 
-        await collection.addImage(image);//MODIFICA TABLA INTERMEDIA
+             if (!alreadySaved) {
+               await collection.addPost(post);  //modificaa tabla intermedia
+             }             
+
+
 
         res.redirect(`/collections/${collection.id}`)
         return;

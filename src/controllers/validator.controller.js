@@ -1,6 +1,7 @@
 const {User,Post,Image,Report}=require('../models')
+const { Op } = require('sequelize');
 
-exports.worklist = async (req,res)=>{   //LISTA DE TRABAJO ----PUBLICACIONES DENUNCIADAS
+exports.workList = async (req,res)=>{   //LISTA DE TRABAJO ----PUBLICACIONES DENUNCIADAS
     try {
         const posts=await Post.findAll({
             where:{
@@ -108,7 +109,7 @@ exports.removePost= async(req,res)=>{
     {
         where:{
             target_type:'image',
-            image_id:post.Images.map(image=>image.id),
+            image_id: {[Op.in]: imageIds},
             status:'pending'
         }
     });
@@ -153,7 +154,7 @@ exports.dismissReports= async (req,res)=>{  //rechace/desestime las denuncias de
         },{
             where:{
                 target_type:'image',
-                image_id:imageIds,
+                  image_id: {[Op.in]: imageIds},
                 status:'pending'
             }
         });

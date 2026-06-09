@@ -6,22 +6,22 @@ class User extends Model {}
 
 User.init({
     name:{
-        type:DataTypes.STRING(60),
+        type:DataTypes.STRING(100),
         allowNull:false
     },
     email:{
-        type:DataTypes.STRING(60),
+        type:DataTypes.STRING(100),
         allowNull:false,
         unique:true
     },
     password:{
-        type:DataTypes.STRING(60),
+        type:DataTypes.STRING(200),
         allowNull:false,
       
 
     },
     role:{
-        type:DataTypes.STRING(60),
+        type:DataTypes.STRING(100),
         allowNull: false,
         defaultValue: 'user',
         validate:{
