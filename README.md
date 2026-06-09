@@ -11,10 +11,16 @@ npm run db:seed(crea los modelos de usuarios)
     Ejemplo:
 
 Usuario:
-demo@email.com
+brian@email.com
+aldana@email.com
+steven@email.com
+sabrina@email.com
+sandra@email.com
 
-Contraseña:
-123456
+Contraseña: Para todos los usuarios la misma 
+123456   
+
+
 Validador:
 validador@email.com
 
@@ -55,28 +61,28 @@ VALORACIONES
 valorar imagen del 1 al 5,mostrar promedio de valoraciones, mostrar cantidad dde valoracciones
 
 DENUNCIAS
-denunciar imagenes,denunciar comentarios,sistema de revicion para validadores
+denunciar imagenes,denunciar comentarios,sistema de revision para validadores
 
 SEGUIMIENTO DE USUARIOS
-seguir usuario,dejar de eguir usuarios,ver seguidores,ver usuarios seguidos 
+seguir usuario,dejar de seguir usuarios,ver seguidores,ver usuarios seguidos 
 
 NOTIFICACIONES
 comentarios,valoraciones,intereses,nuevos seguidores
 
 COLECCIONES
-crear coleccioness,guardar publicaciones ,guardar imagenes,eliminar elementos de una colecccion
+crear colecciones,guardar publicaciones ,guardar imagenes,eliminar elementos de una colecccion
 
 INTERESES
-boton me interesa y comunicaccion entre comprador y autor 
+boton me interesa y comunicacion entre comprador y autor 
 
 MENSAJERIA
-comversacion asociadas a intereses ,mensajeria privada entre usuario 
+conversacion asociadas a intereses ,mensajeria privada entre usuario 
 
 BUSCADOR
  por texto, por autor, por etiqueta, por licencia,,por valoracion minima
 
 
  ----------------Almacenamiento de imagenes-----------------------------------------
- las imagenes se almacenan direcctamente en Postgre utilizando Tipo BYTEA,onvercion de base64 desde el navegador,comverccion a buffer en el servidor
+ las imagenes se almacenan direcctamente en PostgreSQL utilizando Tipo BYTEA, Convercion de base64 desde el navegador,convercion a buffer en el servidor
 
 

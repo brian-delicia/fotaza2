@@ -33,7 +33,7 @@ exports.register = async (req,res)=>{
             password:hashedPassword,
             role: 'user'
         })
-        res.redirect('/login');
+        res.redirect('/login?registered=true');
         return;
     }catch(error){
         console.error(error);
@@ -45,7 +45,11 @@ exports.register = async (req,res)=>{
 
 };
 exports.showLogin = (req,res)=>{
-    res.render('auth/login');
+    res.render('auth/login', {
+        success: req.query.registered
+            ? 'Usuario registrado correctamente. Ya puede iniciar sesión.'
+            : null
+    })
 
 }
 exports.login= async (req,res)=>{

@@ -53,6 +53,7 @@ exports.detail = async (req,res)=>{
             res.render('errors/404');
             return
         }
+
         if (!req.session.user && image.license !== 'free') {
            res.redirect('/posts');
            return;
@@ -62,14 +63,50 @@ exports.detail = async (req,res)=>{
         const ratings= image.Ratings || [];
         const average =calculateAverage(ratings);
 
-       
+        let errorMessage = null;
+
+        if (req.query.error === "ya_valoraste") {
+          errorMessage = "Ya valoraste esta imagen anteriormente.";
+        }
+
+        if (req.query.error === "ya_denunciaste") {
+          errorMessage = "Ya denunciaste esta imagen anteriormente.";
+        }
+
+        if (req.query.error === "autor_valora") {
+          errorMessage = "No podes valorar tu propia imagen.";
+        }
+
+        if (req.query.error === "autor_denuncia") {
+          errorMessage = "No podes denunciar tu propia imagen.";
+        }
+
+        if (req.query.error === "autor_interes") {
+          errorMessage = "No podes marcar interes en tu propia imagen.";
+        }
+        if (req.query.error === "ya_interesado") {
+          errorMessage = "Ya marcaste interes en esta imagen.";
+        }
+        if (req.query.error === "autor_denuncia_comentario") {
+          errorMessage = "No podes denunciar tu propio comentario.";
+        }
+
+        if (req.query.error === "ya_denunciaste_comentario") {
+        errorMessage = "Ya denunciaste este comentario anteriormente.";
+        }
+        if (req.query.error === 'denuncia_invalida') {
+        errorMessage = 'Debe completar correctamente el motivo y la descripcion de la denuncia.';
+        }
+       if (req.query.error === 'denuncia_invalida') {
+        errorMessage = 'Debe ingresar un motivo y una descripcion mas completa para la denuncia.';}
 
       
         res.render('images/detail',{
             image,
             comments:image.Comments || [],
             ratingAverage:average,
-            ratingCount:ratings.length
+            ratingCount:ratings.length,
+            errorMessage
             
         }
     );  return

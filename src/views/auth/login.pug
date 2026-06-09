@@ -5,7 +5,9 @@ block content
 
   if error
     p.text-danger= error
-
+  if success
+   .alert.alert-success.mb-3
+     = success
   form(method="POST", action="/login")
     label Email
     input.form-control.mb-2(type="email", name="email", required)

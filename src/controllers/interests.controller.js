@@ -59,11 +59,11 @@ exports.create  =  async (req,res)=>{
             return;
         }
         const authorId= image.Post.user_id;
-        if(authorId === userId){              //EVITA QUE ALGUIEN MARQUE INTERES EN SU PROPIA FOTO
-            res.redirect(`/images/${image.id}`)
-            return;
-        }
-
+        if (authorId === userId) {
+           res.redirect(`/images/${image.id}?error=autor_interes`)
+           return;
+         }
+ 
         const [interest,created]= await Interest.findOrCreate({  //BUSCA UN INTERES SI NO LO ENCUENTRA LO CREA
             where:{
                 user_id:userId,
@@ -75,7 +75,11 @@ exports.create  =  async (req,res)=>{
                 status:'open'
             }
         });
-        if(created){
+        if (!created) {
+         res.redirect(`/images/${image.id}?error=ya_interesado`)
+         return;
+      
+        }else{
                 //helpers 
         await createNotification(authorId,userId,'interest','marco que le interesa una de tus fotos ');
            

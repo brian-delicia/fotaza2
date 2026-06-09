@@ -1,6 +1,7 @@
 require('dotenv').config();
 
-const bcript=require('bcrypt');
+const bcrypt=require('bcrypt');
+
 const sequelize=require('../src/database');
 const {User,Collection}=require('../src/models');
 

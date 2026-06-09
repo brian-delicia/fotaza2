@@ -1,8 +1,8 @@
 {
   "name": "fotaza2",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Proyecto Fotaza 2 desarrollado con Node.js, Express, Sequelize, PostgreSQL y Pug",
+  "main":"src/app.js",
   "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js",

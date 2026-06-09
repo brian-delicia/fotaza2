@@ -10,10 +10,10 @@ exports.reportImage = async (req,res)=>{
         const userId = req.session.user.id;
 
        const result = reportSchema.safeParse(req.body);
-        if(!result.success){
-            res.redirect(`/images/${imageId}`)
-            return;
-        }
+        if (!result.success) {
+         res.redirect(`/images/${imageId}?error=denuncia_invalida`)
+         return;
+      }
         const { reason, description } = result.data;
 
         const image = await Image.findByPk(imageId,{
@@ -26,11 +26,11 @@ exports.reportImage = async (req,res)=>{
             res.redirect('/posts')
             return;
         }
-
-        if(image.Post.user_id=== userId){
-            res.redirect(`/images/${image.id}`)
+         if (image.Post.user_id === userId) {
+            res.redirect(`/images/${image.id}?error=autor_denuncia`)
             return;
         }
+       
         const existingReport= await Report.findOne({ //BUSCA SI EL USUARIO YA DENUNCIO LA MISMA IMAGEN
                                                      //PARA EVITAR REPEETIR LA DENUNCIA 
             where:{
@@ -41,10 +41,14 @@ exports.reportImage = async (req,res)=>{
             }
 
         });
-        if(existingReport){
-            res.redirect(`/images/${image.id}`)
-            return;
-        }
+         
+
+        if (existingReport) {
+          res.redirect(`/images/${image.id}?error=ya_denunciaste`)
+          return;
+         }
+       
+        
         await Report.create({
             user_id:userId,
             image_id:image.id,
@@ -72,7 +76,7 @@ exports.reportImage = async (req,res)=>{
                 status:'review'
             });
             //helpers
-        await createNotification(image.Post.user_id,userId,'report','una de tus publicaciones fue enviada a revicion')
+        await createNotification(image.Post.user_id,userId,'report','Una de tus publicaciones fue enviada a revicion')
          
 
         }
@@ -94,13 +98,25 @@ exports.reportComments= async(req,res)=>{
         
 const commentId= req.params.commentId;
 const userId= req.session.user.id;
+
 const result= reportSchema.safeParse(req.body)
 
 
 
-if(!result.success){
-    res.redirect('/posts')
-    return;
+if (!result.success) {
+  const comment = await Comment.findByPk(commentId,{
+    include: [
+      {
+        model: Image
+      }
+    ]
+  });
+
+  if (comment && comment.Image) {
+    return res.redirect(`/images/${comment.Image.id}?error=denuncia_invalida`);
+  }
+
+  return res.redirect('/posts');
 }
 const {reason,description}=result.data;
 
@@ -114,6 +130,7 @@ const comment = await Comment.findByPk(commentId,{
 
 });
     if(!comment){
+       
         res.redirect('/posts')
         return;
     }
@@ -128,11 +145,13 @@ const comment = await Comment.findByPk(commentId,{
             target_type:'comment'
         }
     });
-    if(existingReport){
-        res.redirect(`/images/${comment.Image.id}`)
-        return;
-
-    }
+   if (existingReport) {
+     res.redirect(`/images/${comment.Image.id}?error=ya_denunciaste_comentario`)
+     return;
+     }
+     console.log('ANTES DE CREAR REPORT');
+console.log('reason:', reason);
+console.log('description:', description);
     await Report.create({
         user_id:userId,
         comment_id:comment.id,

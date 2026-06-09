@@ -27,27 +27,29 @@ exports.rateImage= async (req,res)=>{  //VALORAR LA IMAGEN
             res.redirect('/posts')
             return
         }
-        if(image.Post.user_id=== userId){
-            res.redirect(`/images/${image.id}`);
-            return;
 
-        }
+      
         const existingRating= await Rating.findOne({ //BUSCA SI EL USUARIO YA HIZO UNA VALORACION
             where:{
                 user_id:userId,
                 image_id:image.id
             }
         })
-        if(existingRating){
-            res.redirect(`/images/${image.id}`)
+           if (image.Post.user_id === userId) {
+              res.redirect(`/images/${image.id}?error=autor_valora`)//si el autor valida su propia imagen
             return;
-        }
-        await Rating.create({
+            }
+            
+            await Rating.create({
             user_id:userId,
             image_id:image.id,
             value:numericValue
 
         });
+         if (existingRating) {       
+          res.redirect(`/images/${image.id}?error=ya_valoraste`)//por si ya vvaloraste la imagen 
+          return;
+               }
         //helpers
         await createNotification(image.Post.user_id,userId,'rating','valorizo una de tus imagenes');
      

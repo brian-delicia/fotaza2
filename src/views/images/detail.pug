@@ -1,6 +1,10 @@
 extends ../layout
 
 block content
+  
+  if errorMessage
+     .alert.alert-warning
+        = errorMessage
 
   h1 Detalle de imagen
 
@@ -25,32 +29,39 @@ block content
 
     if user
       h3 Valorar imagen
+        if user
+           form(method="POST", action=`/ratings/images/${image.id}`)
+             select.form-control.mb-2(name="value", required)
+               option(value="1") 1
+               option(value="2") 2
+               option(value="3") 3
+               option(value="4") 4
+               option(value="5") 5
 
-      form(method="POST", action=`/ratings/images/${image.id}`)
-        select.form-control.mb-2(name="value", required)
-          option(value="1") 1
-          option(value="2") 2
-          option(value="3") 3
-          option(value="4") 4
-          option(value="5") 5
-
-        button.btn.btn-primary(type="submit") Valorar
-
+             button.btn.btn-primary(type="submit") Valorar
+        else 
+             .alert.alert-info
+               | Debe iniciar sesion para valorar imagenes.
       h3 Me interesa
-
-      form(method="POST", action=`/interests/images/${image.id}`)
-        button.btn.btn-success(type="submit") Me interesa
-
+        if user
+          form(method="POST", action=`/interests/images/${image.id}`)
+            button.btn.btn-success(type="submit") Me interesa
+        else 
+          .alert.alert-info
+            | Debe iniciar sesion para marcar interes.
       h3 Denunciar imagen
+        if user
+           form(method="POST", action=`/reports/images/${image.id}`)
+             label Motivo
+             input.form-control.mb-2(type="text", name="reason", required)
 
-      form(method="POST", action=`/reports/images/${image.id}`)
-        label Motivo
-        input.form-control.mb-2(type="text", name="reason", required)
+             label Descripcion
+             textarea.form-control.mb-2(name="description", required)
 
-        label Descripcion
-        textarea.form-control.mb-2(name="description", required)
-
-        button.btn.btn-danger(type="submit") Denunciar
+             button.btn.btn-danger(type="submit") Denunciar
+        else
+           .alert.alert-info
+             | Debe iniciar sesion para denunciar contenido.
 
       if image.Post && image.Post.user_id === user.id && image.comments_open
         form(method="POST", action=`/images/${image.id}/close-comments`)
@@ -62,11 +73,12 @@ block content
 
     if image.comments_open
       if user
-        form(method="POST", action=`/comments/images/${image.id}`)
-          textarea.form-control.mb-2(name="content", required)
-          button.btn.btn-primary(type="submit") Comentar
+        form(method="POST" action=`/comments/images/${image.id}`)
+           textarea.form-control.mb-2(name="content")
+           button.btn.btn-primary(type="submit") Comentar
       else
-        p Para comentar debe iniciar sesion.
+         .alert.alert-info
+          | Debe iniciar sesion para comentar.
     else
       p Los comentarios estan cerrados.
 
