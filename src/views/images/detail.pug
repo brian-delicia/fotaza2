@@ -1,7 +1,9 @@
 extends ../layout
 
 block content
-  
+  if successMessage
+     .alert.alert-success
+       = successMessage
   if errorMessage
      .alert.alert-warning
         = errorMessage
@@ -90,15 +92,29 @@ block content
 
         p= comment.content
 
-        if user && image.Post && comment.user_id !== image.Post.user_id
-          form(method="POST", action=`/reports/comments/${comment.id}`)
-            label Motivo
-            input.form-control.mb-2(type="text", name="reason", required)
+        if user && user.id !== comment.user_id
 
-            label Descripcion
-            textarea.form-control.mb-2(name="description", required)
+           details.mt-2
+             summary.btn.btn-sm.btn-outline-danger
+                Denunciar Denunciar
 
-            button.btn.btn-danger(type="submit") Denunciar comentario
+             form.mt-2(method="POST", action=`/reports/comments/${comment.id}`)
+
+                label Motivo
+                input.form-control.mb-2(
+                  type="text"
+                  name="reason"
+                  required
+                  )
+
+                label Descripcion
+                textarea.form-control.mb-2(
+                   name="description"
+                   required
+                    )
+
+                button.btn.btn-danger(type="submit")
+                   Enviar Enviar
     else
       p No hay comentarios.
 

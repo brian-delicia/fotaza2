@@ -57,6 +57,8 @@ exports.reportImage = async (req,res)=>{
             description,
             status:'pending'
         });
+        await createNotification(image.Post.user_id,userId,'report','Una de tus imagenes fue denunciada'
+);
         await image.Post.update({
             locked_by_report:true
 
@@ -80,8 +82,8 @@ exports.reportImage = async (req,res)=>{
          
 
         }
-        res.redirect(`/images/${image.id}`)
-        return;
+     res.redirect(`/images/${image.id}?success=imagen_denunciada`)
+     return;
 
 
     } catch (error) {
@@ -134,9 +136,10 @@ const comment = await Comment.findByPk(commentId,{
         res.redirect('/posts')
         return;
     }
-    if(comment.user_id=== userId){
-        res.redirect(`/images/${comment.Image.id}`)
-        return;
+    if (comment.user_id === userId) {
+         res.redirect(`/images/${comment.Image.id}?error=autor_denuncia_comentario`)
+         return;
+
     }
     const existingReport=await Report.findOne({
         where:{

@@ -30,7 +30,7 @@ exports.index = async (req, res) => {
       order: [["created_at", "DESC"]],
     });
     const filteredInterests = interest.filter((interest) => {
-      const interestedUserId = interest.User_id;
+      const interestedUserId = interest.user_id;
       const authorId = interest.Image.Post.user_id;
       return interestedUserId === userId || authorId === userId; //SI  //SOY QUIEN MARCO EL INTEREST
     }); //SOY EL DUEÑO DE LA FOTO
@@ -176,7 +176,12 @@ exports.sendMessage = async (req, res) => {
       receiver_id: receiverId,
       content: content.trim(),
     });
-    res.redirect(`/messages/interests/${interest.id}`);
+
+
+   res.redirect(`/messages/interests/${interest.id}`);
+
+
+
   } catch (error) {
     console.error(error);
 

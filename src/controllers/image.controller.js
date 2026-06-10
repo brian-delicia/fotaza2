@@ -100,13 +100,22 @@ exports.detail = async (req,res)=>{
        if (req.query.error === 'denuncia_invalida') {
         errorMessage = 'Debe ingresar un motivo y una descripcion mas completa para la denuncia.';}
 
-      
+
+
+        let successMessage = null;
+
+        if (req.query.success === 'imagen_denunciada') {
+         successMessage = 'Imagen denunciada correctamente.';
+           }
+
+
         res.render('images/detail',{
             image,
             comments:image.Comments || [],
             ratingAverage:average,
             ratingCount:ratings.length,
-            errorMessage
+            errorMessage,
+            successMessage
             
         }
     );  return

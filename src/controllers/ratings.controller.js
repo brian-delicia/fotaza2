@@ -40,16 +40,18 @@ exports.rateImage= async (req,res)=>{  //VALORAR LA IMAGEN
             return;
             }
             
-            await Rating.create({
-            user_id:userId,
-            image_id:image.id,
-            value:numericValue
-
-        });
+       
          if (existingRating) {       
           res.redirect(`/images/${image.id}?error=ya_valoraste`)//por si ya vvaloraste la imagen 
           return;
                }
+           await Rating.create({
+                 user_id:userId,
+                 image_id:image.id,
+                 value:numericValue
+
+        });
+
         //helpers
         await createNotification(image.Post.user_id,userId,'rating','valorizo una de tus imagenes');
      
