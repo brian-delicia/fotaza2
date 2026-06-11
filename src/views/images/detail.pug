@@ -14,6 +14,29 @@ block content
     img(src=`/images/${image.id}/raw`, width="400")
 
     p Licencia: #{image.license}
+    
+    if user && collections && collections.length > 0
+      if image.license === 'free'
+        hr
+
+        details
+          summary.btn.btn-secondary.mb-2
+            Guardar Guardar en colección
+        
+
+          each collection in collections
+            form.d-inline(method="POST", action=`/collections/${collection.id}/images/${image.id}`)
+              button.btn.btn-secondary.me-2(type="submit")
+                Guardar en #{collection.name}
+
+
+      else
+        hr
+
+
+        .alert.alert-warning
+            | Esta imagen tiene copyright. Para guardarla o utilizarla debe contactar al autor mediante "Me interesa".
+
 
     if image.watermark_text
       p Marca de agua: #{image.watermark_text}

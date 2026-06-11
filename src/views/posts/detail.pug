@@ -1,9 +1,16 @@
 extends ../layout
 
 block content
-
+  if successMessage
+    .alert.alert-success
+      = successMessage
+  
   if error
     p.text-danger= error
+
+  if errorMessage
+    .alert.alert-warning
+      = errorMessage
 
   if post
     h1= post.title
@@ -40,6 +47,24 @@ block content
         if user
           form.d-inline(method="POST", action=`/interests/images/${image.id}`)
             button.btn.btn-success(type="submit") Me interesa
+
+      if user && collections && collections.length > 0
+        - const allImagesFree = post.Images.every(image => image.license === 'free')
+
+        hr
+
+        if allImagesFree
+          details
+            summary.btn.btn-secondary.mb-2
+              Guardar Guardar publicacion en coleccion
+
+            each collection in collections
+              form.d-inline(method="POST", action=`/collections/${collection.id}/posts/${post.id}`)
+                button.btn.btn-outline-primary.me-2(type="submit")
+                  Guardar en #{collection.name}
+        else
+          .alert.alert-warning
+            | Esta publicacion contiene imagenes con copyright. No puede guardarse completa en una coleccion.
     else
       p Esta publicacion no tiene imagenes visibles.
 

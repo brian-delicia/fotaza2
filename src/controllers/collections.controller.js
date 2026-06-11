@@ -194,10 +194,11 @@ exports.addPost = async (req,res)=>{     //AGREGA PUBLICACION A A COLECCION
         }
         const alreadySaved = await collection.hasPost(post);
 
-            if (!alreadySaved) { //modifica laa tabla intermedia
-            await collection.addPost(post);
-          }
+            if (alreadySaved) {
+              return res.redirect(`/posts/${post.id}?error=post_ya_guardado`);
+            }
 
+            await collection.addPost(post);
         
 
         res.redirect(`/collections/${collection.id}`)
@@ -223,15 +224,25 @@ exports.addImage= async(req,res)=>{
         });
         const image = await Image.findByPk(req.params.imageId);
 
-        if(!collection || !image){
-            res.redirect('/posts')
-            return;
+        if (!collection || !image) {
+           res.redirect("/posts")
+           return;
         }
-        const alreadySaved = await collection.hasPost(post);
 
-             if (!alreadySaved) {
-               await collection.addPost(post);  //modificaa tabla intermedia
-             }             
+        if (image.license === "copyright") {
+           res.redirect(`/images/${image.id}?error=copyright_guardar`)
+           return;
+        }
+
+        const alreadySaved = await collection.hasImage(image);
+
+             if (alreadySaved) {
+               return res.redirect(
+                 `/images/${image.id}?error=imagen_ya_guardada`,
+               );
+             }
+
+             await collection.addImage(image);
 
 
 

@@ -15,14 +15,23 @@ html(lang="es")
            a.btn.btn-primary.me-2(href="/posts/new") Nueva publicacion
            a.btn.btn-secondary.me-2(href="/search") Buscar
            a.btn.btn-secondary.me-2(href="/collections") Colecciones
-           a.btn.btn-secondary.me-2(href="/notifications") Notificaciones
-           a.btn.btn-secondary.me-2(href="/messages") Mensajes
+           a.btn.btn-secondary.me-2(href="/notifications")
+             | Notificaciones
+             if unreadNotificationsCount > 0
+              span.badge.bg-danger.ms-1= unreadNotificationsCount 
+           a.btn.btn-secondary.me-2(href="/messages")
+             | Mensajes
+             if unreadMessagesCount > 0
+               span.badge.bg-danger.ms-1= unreadMessagesCount
            a.btn.btn-secondary.me-2(href=`/profile/${user.id}`) Mi perfil
 
            if user.role === 'validator'
              a.btn.btn-warning.me-2(href="/validator/reports") Validador
 
-           a.btn.btn-danger(href="/logout") Salir
+           button.btn.btn-danger(
+             type="button"
+             data-bs-toggle="modal"
+             data-bs-target="#logoutModal") Salir
 
          else
            a.btn.btn-primary.me-2(href="/login") Login
@@ -31,3 +40,25 @@ html(lang="es")
       
 
       block content
+      
+      if user
+        #logoutModal.modal.fade(tabindex="-1")
+          .modal-dialog
+            .modal-content
+
+              .modal-header
+                h5.modal-title Confirmar salida
+
+              .modal-body
+                p ¿Está seguro que desea cerrar sesión?
+
+              .modal-footer
+                button.btn.btn-secondary(
+                  type="button"
+                  data-bs-dismiss="modal"
+                ) Cancelar
+
+                a.btn.btn-danger(href="/logout")
+                  Cerrar cerrar sesión
+
+                    script(src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js")

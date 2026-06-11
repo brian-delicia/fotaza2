@@ -4,6 +4,7 @@ const path=require('path');    //MANEJA RUTAS DE CARPETAS
 require('dotenv').config();    // LEER .env
 
 require('./models');
+const {Notification,Message}=require('./models')
 const authRoutes = require('./routes/auth.routes');
 const postsRoutes = require('./routes/posts.routes');
 const imagesRoutes = require('./routes/images.routes');
@@ -44,10 +45,30 @@ app.use(session({                       //permite mantener los usuarios loguedos
     }
 }))
 
-app.use((req,res,next) =>{
-    res.locals.user= req.session.user || null;
-    next();
+app.use(async (req, res, next) => {
+    res.locals.user = req.session.user || null;
+    res.locals.unreadNotificationsCount = 0;
+    res.locals.unreadMessagesCount = 0;
+
+    if (req.session.user) {
+    res.locals.unreadNotificationsCount = await Notification.count({
+      where: {
+        user_id: req.session.user.id,
+        read: false
+      }
+    });
+
+    res.locals.unreadMessagesCount = await Message.count({
+      where: {
+        receiver_id: req.session.user.id,
+        read: false
+      }
+    });
+  }
+
+  next();
 });
+
 
 app.get('/', (req, res) => {
   res.redirect('/posts');

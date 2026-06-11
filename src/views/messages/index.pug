@@ -2,24 +2,35 @@ extends ../layout
 
 block content
 
-  h1 Conversaciones
+   h1 Conversaciones
 
-  if error
-    p.text-danger= error
+   if error
+     p.text-danger= error
 
-  if interests.length === 0
-    p No tenes conversaciones.
+   if interests && interests.length > 0
+    each interest in interests
+      .card.mb-3
+        .card-body
 
-  each interest in interests
-    hr
+          if interest.Image && interest.Image.Post
+            h5= interest.Image.Post.title
 
-    if interest.Image
-      p Imagen relacionada:
-      a(href=`/images/${interest.Image.id}`) Ver imagen
+          if user.id === interest.Image.Post.user_id
+            p
+              strong Interesado:
+              |  #{interest.User.name}
+          else
+            p
+              strong Autor:
+              |  #{interest.Image.Post.User.name}
 
-    if interest.Image && interest.Image.Post && interest.Image.Post.User
-      p Autor: #{interest.Image.Post.User.name}
+          if interest.Image
+            img.mb-2(src=`/images/${interest.Image.id}/raw`, width="150")
 
-    a.btn.btn-primary(
-      href=`/messages/interests/${interest.id}`
-    ) Abrir conversacion
+          br
+
+          a.btn.btn-primary(href=`/messages/interests/${interest.id}`)
+            | Abrir conversacion
+
+    else
+      p No tenes conversaciones.

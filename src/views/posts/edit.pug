@@ -4,18 +4,53 @@ block content
 
   h1 Editar publicacion
 
+  if errorMessage
+    .alert.alert-warning
+      = errorMessage
+
   if error
     p.text-danger= error
 
   form(method="POST", action=`/posts/${post.id}/edit`)
     label Titulo
-    input.form-control.mb-2(type="text", name="title", value=post.title, required)
+    input.form-control.mb-2(type="text", name="title", value=post.title)
 
     label Descripcion
     textarea.form-control.mb-2(name="description")= post.description
 
     label Etiquetas separadas por coma
-    input.form-control.mb-2(type="text", name="tags")
+    input.form-control.mb-2(type="text", name="tags",value=tagsText)
+
+    h3 Imagenes
+
+    if post.Images && post.Images.length > 0
+      each image in post.Images
+        .border.p-2.mb-2
+
+          img(src=`/images/${image.id}/raw`, width="200")
+
+          br
+          br
+
+          label Licencia
+          select.form-control.mb-2(name=`license_${image.id}`)
+            option(
+              value="free"
+              selected=image.license === 'free'
+           )  Sin copyright
+
+            option(
+              value="copyright"
+              selected=image.license === 'copyright'
+           )  Con copyright
+
+          if image.license === 'copyright'
+            label Marca de agua
+            input.form-control.mb-2(
+              type="text"
+              name=`watermark_${image.id}`
+              value=image.watermark_text
+           )
 
     button.btn.btn-primary(type="submit") Guardar cambios
 

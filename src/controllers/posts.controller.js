@@ -1,5 +1,5 @@
 const {Op}=require('sequelize');
-const {User,Post,Image,Tag,Rating,Follow}=require('../models');
+const {User,Post,Image,Tag,Rating,Follow,Collection}=require('../models');
 
 const {postSchema}=require('../validations/post.schema');
 
@@ -157,8 +157,32 @@ exports.detail = async (req,res)=>{
          if (!req.session.user) {
       post.Images = post.Images.filter(image => image.license === 'free');
     }
+
+    let collections = [];
+
+    if (req.session.user) {
+      collections = await Collection.findAll({
+        where: {
+          user_id: req.session.user.id,
+        },
+      });
+    }
+
+    let errorMessage = null;
+
+    if (req.query.error === "post_ya_guardado") {
+      errorMessage = "Esta publicacion ya esta guardada en esa coleccion.";
+    }
+    let successMessage = null;
+
+    if (req.query.success === "editado") {
+      successMessage = "Publicacion editada con exito.";
+    }
         res.render('posts/detail',{
-            post
+            post,
+            collections,
+            errorMessage,
+            successMessage
 
         });
         return;
@@ -191,8 +215,21 @@ exports.showEdit = async (req,res)=>{     //muestra ediciones
             res.redirect(`/posts/${post.id}`)
             return;
         }
+        const tagsText = post.Tags
+          ? post.Tags.map((tag) => tag.name).join(", ")
+          : "";
+
+        let errorMessage = null;
+
+        if (req.query.error === "datos_invalidos") {
+          errorMessage =
+            "Debe completar correctamente el titulo y las etiquetas.";
+        }
         res.render('posts/edit',{
-            post
+            post,
+            tagsText,
+            errorMessage
+            
         })
         return;
         
@@ -209,14 +246,16 @@ exports.update= async (req,res)=>{
         const{title,description,tags}=req.body
 
         const result= postSchema.safeParse({title,description,tags });
-        if(!result.success){
-            res.redirect(`/posts/${req.params.id}/edit`)
+        if (!result.success) {
+          res.redirect(`/posts/${req.params.id}/edit?error=datos_invalidos`)
          return;
-        }
+      }
        
         const validData=result.data;
 
-        const post =await Post.findByPk(req.params.id);
+        const post =await Post.findByPk(req.params.id,{
+            include:[Image]
+        });
 
         if(!post){
             res.redirect('/posts')
@@ -250,9 +289,19 @@ exports.update= async (req,res)=>{
             };
             await post.setTags(newTags);
         }
+
         
-            res.redirect(`/posts/${post.id}`)
-            return
+        for (const image of post.Images) {
+          const newLicense = req.body[`license_${image.id}`];
+          const newWatermark = req.body[`watermark_${image.id}`];
+
+          await image.update({
+            license: newLicense,
+            watermark_text: newLicense === "copyright" ? newWatermark : null,
+          });
+        }
+        
+      return res.redirect(`/posts/${post.id}?success=editado`);
 
     } catch (error) {
         console.error(error)

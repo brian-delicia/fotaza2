@@ -1,4 +1,4 @@
-const {User,Post,Image,Comment,Rating }=require('../models');
+const {User,Post,Image,Comment,Rating,Collection }=require('../models');
 
 const calculateAverage =require('../helpers/calculateAverage');
 
@@ -63,6 +63,16 @@ exports.detail = async (req,res)=>{
         const ratings= image.Ratings || [];
         const average =calculateAverage(ratings);
 
+        let collections = [];
+
+        if (req.session.user) {
+          collections = await Collection.findAll({
+            where: {
+              user_id: req.session.user.id,
+            },
+          });
+        }
+
         let errorMessage = null;
 
         if (req.query.error === "ya_valoraste") {
@@ -84,9 +94,11 @@ exports.detail = async (req,res)=>{
         if (req.query.error === "autor_interes") {
           errorMessage = "No podes marcar interes en tu propia imagen.";
         }
+        
         if (req.query.error === "ya_interesado") {
           errorMessage = "Ya marcaste interes en esta imagen.";
         }
+
         if (req.query.error === "autor_denuncia_comentario") {
           errorMessage = "No podes denunciar tu propio comentario.";
         }
@@ -94,13 +106,20 @@ exports.detail = async (req,res)=>{
         if (req.query.error === "ya_denunciaste_comentario") {
         errorMessage = "Ya denunciaste este comentario anteriormente.";
         }
+
         if (req.query.error === 'denuncia_invalida') {
         errorMessage = 'Debe completar correctamente el motivo y la descripcion de la denuncia.';
         }
-       if (req.query.error === 'denuncia_invalida') {
+
+        if (req.query.error === 'denuncia_invalida') {
         errorMessage = 'Debe ingresar un motivo y una descripcion mas completa para la denuncia.';}
 
-
+        if (req.query.error === "copyright_guardar") {
+         errorMessage = "No podes guardar una imagen con copyright sin permiso del autor.";
+        }
+        if (req.query.error === "imagen_ya_guardada") {
+          errorMessage = "Esta imagen ya esta guardada en esa coleccion.";
+        }
 
         let successMessage = null;
 
@@ -115,7 +134,8 @@ exports.detail = async (req,res)=>{
             ratingAverage:average,
             ratingCount:ratings.length,
             errorMessage,
-            successMessage
+            successMessage,
+            collections
             
         }
     );  return
