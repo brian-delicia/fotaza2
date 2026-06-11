@@ -40,7 +40,7 @@ app.use(session({                       //permite mantener los usuarios loguedos
     resave:false,
     saveUninitialized:false,
     cookie:{
-        secure:false,     //producion cambiar a true
+        secure:true,     //producion cambiar a true
         maxAge:24*60*60*1000 //24hs
     }
 }))
