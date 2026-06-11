@@ -2,6 +2,9 @@ const express=require('express');
 const session=require('express-session');
 const path=require('path');    //MANEJA RUTAS DE CARPETAS
 require('dotenv').config();    // LEER .env
+//tablas usuarios y colleciones demo
+const sequelize = require('./database');
+const seedRender = require('../database/seedRender');
 
 require('./models');
 const {Notification,Message}=require('./models')
@@ -98,8 +101,20 @@ app.use(serverError);
 
 
 
-const PORT=process.env.PORT ;
+const PORT = process.env.PORT ;
 
-app.listen(PORT,()=>{
-    console.log(`servidor funcionando  en el puerto: ${PORT}`)
-})
+sequelize.sync({ alter: true })
+  .then(async () => {
+    console.log('Base sincronizada correctamente');
+
+    if (process.env.NODE_ENV === 'production') {
+      await seedRender();
+    }
+
+    app.listen(PORT, () => {
+      console.log(`servidor funcionando en el puerto: ${PORT}`);
+    });
+  })
+  .catch((error) => {
+    console.error('Error al iniciar servidor:', error);
+  });
