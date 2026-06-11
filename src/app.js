@@ -38,6 +38,7 @@ app.use(express.urlencoded({  // configura el express para leer formularios
 
 app.use(express.static(path.join(__dirname,'public')));// le  dice a a express que la carpeta public contendra archivos staticos
 
+app.set('trust proxy', 1);
 app.use(session({                       //permite mantener los usuarios loguedos
     secret:process.env.SESSION_SECRET,
     resave:false,
@@ -107,9 +108,7 @@ sequelize.sync({ alter: true })
   .then(async () => {
     console.log('Base sincronizada correctamente');
 
-    if (process.env.NODE_ENV === 'production') {
-      //await seedRender();
-    }
+  
 
     app.listen(PORT, () => {
       console.log(`servidor funcionando en el puerto: ${PORT}`);
