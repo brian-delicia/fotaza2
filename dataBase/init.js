@@ -8,7 +8,7 @@ async function initDatabase(){
      await sequelize.authenticate();
      console.log('conexion con la base de datos exitosa')
 
-     await sequelize.sync({force:true});
+     await sequelize.sync({alter:true});
      console.log('tablas creadas con exito');
      process.exit();
     }catch(error){

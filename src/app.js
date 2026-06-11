@@ -41,7 +41,7 @@ app.use(session({                       //permite mantener los usuarios loguedos
     saveUninitialized:false,
     cookie:{
         secure:false,     //producion cambiar a true
-        maxAge:1*60*60*1000 //1hs
+        maxAge:24*60*60*1000 //24hs
     }
 }))
 
