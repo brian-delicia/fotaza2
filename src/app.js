@@ -4,7 +4,7 @@ const path=require('path');    //MANEJA RUTAS DE CARPETAS
 require('dotenv').config();    // LEER .env
 //tablas usuarios y colleciones demo
 const sequelize = require('./database');
-const seedRender = require('../database/seedRender');
+//const seedRender = require('../database/seedRender');
 
 require('./models');
 const {Notification,Message}=require('./models')
@@ -108,7 +108,7 @@ sequelize.sync({ alter: true })
     console.log('Base sincronizada correctamente');
 
     if (process.env.NODE_ENV === 'production') {
-      await seedRender();
+      //await seedRender();
     }
 
     app.listen(PORT, () => {
