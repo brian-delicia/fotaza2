@@ -1,32 +1,124 @@
+
 extends ../layout
 
 block content
 
-  h1 Publicaciones
+  .posts-header
+    .posts-header-text
+      span.section-kicker
+        i.bi.bi-camera
+        | Comunidad Fotaza
+
+      h1 Descubrí fotografías
+
+      p
+        | Explorá las últimas publicaciones de nuestra comunidad.
+
+    if user
+      a.create-button(href="/posts/new")
+        i.bi.bi-plus-lg
+        | Nueva publicación
+
 
   if error
-    p.text-danger= error
+    .fotaza-alert.alert-danger
+      i.bi.bi-exclamation-circle
+      span= error
 
-  if user
-    a.btn.btn-success.mb-3(href="/posts/new") Nueva publicacion
 
   if posts.length === 0
-    p No hay publicaciones para mostrar.
 
-  each post in posts
-    hr
+    .empty-state
+      .empty-icon
+        i.bi.bi-images
 
-    h3= post.title
+      h3 Todavía no hay publicaciones
 
-    if post.User
-      p Autor: #{post.User.name}
+      p Sé el primero en compartir una fotografía con la comunidad.
 
-    if post.description
-      p= post.description
+      if user
+        a.create-button(href="/posts/new")
+          i.bi.bi-plus-lg
+          | Publicar fotografía
 
-    if post.Images && post.Images.length > 0
-      img.mb-2(src=`/images/${post.Images[0].id}/raw`, width="250")
 
-    br
+  else
 
-    a.btn.btn-primary(href=`/posts/${post.id}`) Ver publicacion
+    .posts-grid
+
+      each post in posts
+
+        article.post-card
+
+          // CABECERA DE LA PUBLICACIÓN
+          .post-card-header
+
+            if post.User
+              a.post-author(href=`/profile/${post.User.id}`)
+
+                .author-avatar
+                  i.bi.bi-person-fill
+
+                .author-info
+                  strong= post.User.name
+                  small Fotógrafo
+
+            else
+              .post-author
+                .author-avatar
+                  i.bi.bi-person-fill
+
+                .author-info
+                  strong Usuario
+                  small Fotógrafo
+
+
+          // IMAGEN PRINCIPAL
+          if post.Images && post.Images.length > 0
+
+            a.post-image-link(href=`/posts/${post.id}`)
+
+              img.post-image(
+                src=`/images/${post.Images[0].id}/raw`
+                alt=post.title
+                loading="lazy"
+              )
+
+              if post.Images.length > 1
+                span.image-count
+                  i.bi.bi-images
+                  | #{post.Images.length}
+
+
+          // INFORMACIÓN
+          .post-card-body
+
+            a.post-title(href=`/posts/${post.id}`)
+              = post.title
+
+            if post.description
+              p.post-description= post.description
+
+
+            // ETIQUETAS
+            if post.Tags && post.Tags.length > 0
+
+              .post-tags
+
+                each tag in post.Tags.slice(0, 5)
+                  a.tag(href=`/search?tag=${encodeURIComponent(tag.name)}`)
+                    | ##{tag.name}
+
+
+            // ACCIONES
+            .post-actions
+
+              a.action-button(href=`/posts/${post.id}`)
+                i.bi.bi-chat
+                span Ver publicación
+
+              if post.Images && post.Images.length > 1
+                span.photo-count
+                  i.bi.bi-images
+                  | #{post.Images.length} fotos
+

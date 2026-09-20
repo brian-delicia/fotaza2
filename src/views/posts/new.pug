@@ -1,27 +1,102 @@
+
 extends ../layout
 
 block content
 
-  h1 Nueva publicacion
+  .form-page
 
-  if error
-    p.text-danger= error
+    .form-page-header
+      a.back-link(href="/posts")
+        i.bi.bi-arrow-left
+        | Volver a publicaciones
 
-  form(method="POST", action="/posts/new", id="postForm")
-    label Titulo
-    input.form-control.mb-2(type="text", name="title", required)
+      .form-heading
+        .form-heading-icon
+          i.bi.bi-camera
 
-    label Descripcion
-    textarea.form-control.mb-2(name="description")
+        div
+          span.section-kicker Nueva publicación
+          h1 Compartí una fotografía
+          p Mostrá tu trabajo a la comunidad de Fotaza.
 
-    label Etiquetas separadas por coma
-    input.form-control.mb-2(type="text", name="tags", placeholder="paisaje, naturaleza", required)
 
-    label Imagenes
-    input.form-control.mb-2(type="file", id="imageFiles", accept="image/png,image/jpeg,image/webp", multiple, required)
+    if error
+      .fotaza-alert.alert-danger
+        i.bi.bi-exclamation-circle
+        span= error
 
-    #imagesContainer
 
-    button.btn.btn-success(type="submit") Publicar
+    form#postForm.fotaza-form(
+      method="POST"
+      action="/posts/new"
+      enctype="multipart/form-data"
+    )
 
-  script(src="/js/image-base64.js")
+      // INFORMACION
+      .form-section
+
+        .form-section-header
+          .section-number 01
+          div
+            h2 Información
+            p Contanos un poco sobre tu publicación.
+
+
+        .form-field
+          label(for="title")
+            | Título
+            span.required *
+
+          input#title.form-control(
+            type="text"
+            name="title"
+            placeholder="Ej: Atardecer en las sierras"
+            required
+            maxlength="100"
+          )
+
+          small.form-help
+            | Elegí un título corto y descriptivo.
+
+
+        .form-field
+          label(for="description")
+            | Descripción
+
+          textarea#description.form-control(
+            name="description"
+            rows="5"
+            maxlength="1000"
+            placeholder="Contá la historia detrás de esta fotografía..."
+          )
+
+
+      // IMAGENES
+      .form-section
+
+        .form-section-header
+          .section-number 02
+          div
+            h2 Tus fotografías
+            p Subí una o varias imágenes para crear tu publicación.
+
+
+        label.upload-area(for="images")
+
+          .upload-icon
+            i.bi.bi-cloud-arrow-up
+
+          strong Subí tus fotografías
+
+          span
+            | Arrastrá tus imágenes acá o hacé clic para seleccionarlas.
+
+          small
+            | Podés seleccionar varias imágenes.
+
+
+        input#images.image-input(
+          type="file"
+          name="images"
+          accept="image
+

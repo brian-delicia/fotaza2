@@ -1,59 +1,162 @@
+
 extends ../layout
 
 block content
 
-  h1 Editar publicacion
+  .form-page
 
-  if errorMessage
-    .alert.alert-warning
-      = errorMessage
+    .form-page-header
 
-  if error
-    p.text-danger= error
+      a.back-link(href=`/posts/${post.id}`)
+        i.bi.bi-arrow-left
+        | Volver a publicación
 
-  form(method="POST", action=`/posts/${post.id}/edit`)
-    label Titulo
-    input.form-control.mb-2(type="text", name="title", value=post.title)
+      .form-heading
 
-    label Descripcion
-    textarea.form-control.mb-2(name="description")= post.description
+        .form-heading-icon
+          i.bi.bi-pencil
 
-    label Etiquetas separadas por coma
-    input.form-control.mb-2(type="text", name="tags",value=tagsText)
+        div
+          span.section-kicker Editar publicación
+          h1 Modificá tu publicación
+          p Actualizá la información de tu fotografía.
 
-    h3 Imagenes
 
-    if post.Images && post.Images.length > 0
-      each image in post.Images
-        .border.p-2.mb-2
+    if error
+      .fotaza-alert.alert-danger
+        i.bi.bi-exclamation-circle
+        span= error
 
-          img(src=`/images/${image.id}/raw`, width="200")
 
-          br
-          br
+    form.fotaza-form(
+      method="POST"
+      action=`/posts/${post.id}/edit`
+      enctype="multipart/form-data"
+    )
 
-          label Licencia
-          select.form-control.mb-2(name=`license_${image.id}`)
-            option(
-              value="free"
-              selected=image.license === 'free'
-           )  Sin copyright
+      // INFORMACION
+      .form-section
 
-            option(
-              value="copyright"
-              selected=image.license === 'copyright'
-           )  Con copyright
+        .form-section-header
+          .section-number 01
 
-          if image.license === 'copyright'
-            label Marca de agua
-            input.form-control.mb-2(
-              type="text"
-              name=`watermark_${image.id}`
-              value=image.watermark_text
-           )
+          div
+            h2 Información
+            p Modificá los datos de la publicación.
 
-    button.btn.btn-primary(type="submit") Guardar cambios
 
-  br
+        .form-field
 
-  a.btn.btn-secondary(href=`/posts/${post.id}`) Volver
+          label(for="title")
+            | Título
+            span.required *
+
+          input#title.form-control(
+            type="text"
+            name="title"
+            value=post.title
+            maxlength="100"
+            required
+          )
+
+
+        .form-field
+
+          label(for="description")
+            | Descripción
+
+          textarea#description.form-control(
+            name="description"
+            rows="5"
+            maxlength="1000"
+          )= post.description || ""
+
+
+      // IMAGENES EXISTENTES
+      .form-section
+
+        .form-section-header
+
+          .section-number 02
+
+          div
+            h2 Fotografías
+            p Estas son las imágenes actuales de tu publicación.
+
+
+        if post.Images && post.Images.length > 0
+
+          .existing-images
+
+            each image in post.Images
+
+              .existing-image
+
+                img(
+                  src=`/images/${image.id}/raw`
+                  alt=post.title
+                )
+
+                .existing-image-info
+
+                  if image.license === 'free'
+                    span.license-free
+                      i.bi.bi-unlock
+                      | Libre de uso
+                  else
+                    span.license-copyright
+                      i.bi.bi-c-circle
+                      | Copyright
+
+
+        .form-field.add-images-field
+
+          label(for="images")
+            | Agregar nuevas imágenes
+
+          input#images.form-control(
+            type="file"
+            name="images"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
+          )
+
+          small.form-help
+            | Las imágenes existentes no se eliminarán al agregar nuevas.
+
+
+      // ETIQUETAS
+      .form-section
+
+        .form-section-header
+
+          .section-number 03
+
+          div
+            h2 Etiquetas
+            p Actualizá las etiquetas de la publicación.
+
+
+        .form-field
+
+          label(for="tags")
+            | Etiquetas
+
+          input#tags.form-control(
+            type="text"
+            name="tags"
+            value=post.Tags ? post.Tags.map(tag => tag.name).join(', ') : ''
+            placeholder="naturaleza, paisaje, fotografía..."
+          )
+
+
+      // ACCIONES
+      .form-actions
+
+        a.cancel-form(href=`/posts/${post.id}`)
+          | Cancelar
+
+        button.submit-form(type="submit")
+          i.bi.bi-check-lg
+          | Guardar cambios
+

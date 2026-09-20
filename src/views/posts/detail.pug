@@ -1,79 +1,188 @@
+
 extends ../layout
 
 block content
+
   if successMessage
-    .alert.alert-success
-      = successMessage
-  
+    .fotaza-alert.alert-success
+      i.bi.bi-check-circle
+      span= successMessage
+
   if error
-    p.text-danger= error
+    .fotaza-alert.alert-danger
+      i.bi.bi-exclamation-circle
+      span= error
 
   if errorMessage
-    .alert.alert-warning
-      = errorMessage
+    .fotaza-alert.alert-warning
+      i.bi.bi-exclamation-triangle
+      span= errorMessage
+
 
   if post
-    h1= post.title
 
-    if post.User
-      p Autor: #{post.User.name}
+    .post-detail
 
-    if post.description
-      p= post.description
+      // CABECERA
+      .detail-header
 
-    h3 Etiquetas
+        .detail-author
 
-    if post.Tags && post.Tags.length > 0
-      each tag in post.Tags
-        span.badge.bg-secondary.me-1= tag.name
-    else
-      p Sin etiquetas
+          if post.User
+            a.author-avatar.large(href=`/profile/${post.User.id}`)
+              i.bi.bi-person-fill
 
-    h3.mt-3 Imagenes
+            .detail-author-info
+              span Publicado por
+              a(href=`/profile/${post.User.id}`)
+                strong= post.User.name
 
-    if post.Images && post.Images.length > 0
-      each image in post.Images
-        hr
+          else
+            .author-avatar.large
+              i.bi.bi-person-fill
 
-        img(src=`/images/${image.id}/raw`, width="300")
+            .detail-author-info
+              span Publicado por
+              strong Usuario
 
-        p Licencia: #{image.license}
 
-        if image.watermark_text
-          p Marca de agua: #{image.watermark_text}
+        if user && user.id === post.user_id && !post.locked_by_report
 
-        a.btn.btn-primary.me-2(href=`/images/${image.id}`) Ver imagen
+          .detail-owner-actions
 
-        if user
-          form.d-inline(method="POST", action=`/interests/images/${image.id}`)
-            button.btn.btn-success(type="submit") Me interesa
+            a.icon-action(href=`/posts/${post.id}/edit`, title="Editar")
+              i.bi.bi-pencil
 
-      if user && collections && collections.length > 0
-        - const allImagesFree = post.Images.every(image => image.license === 'free')
+            form(method="POST", action=`/posts/${post.id}/delete`)
+              button.icon-action.danger(
+                type="submit"
+                title="Eliminar"
+                onclick="return confirm('¿Eliminar esta publicación?')"
+              )
+                i.bi.bi-trash
 
-        hr
 
-        if allImagesFree
-          details
-            summary.btn.btn-secondary.mb-2
-              Guardar Guardar publicacion en coleccion
+      // TITULO
+      .detail-title-section
 
-            each collection in collections
-              form.d-inline(method="POST", action=`/collections/${collection.id}/posts/${post.id}`)
-                button.btn.btn-outline-primary.me-2(type="submit")
-                  Guardar en #{collection.name}
-        else
-          .alert.alert-warning
-            | Esta publicacion contiene imagenes con copyright. No puede guardarse completa en una coleccion.
-    else
-      p Esta publicacion no tiene imagenes visibles.
+        h1= post.title
 
-    if user && user.id === post.user_id && !post.locked_by_report
-      hr
-      a.btn.btn-warning.me-2(href=`/posts/${post.id}/edit`) Editar
+        if post.description
+          p= post.description
 
-      form.d-inline(method="POST", action=`/posts/${post.id}/delete`)
-        button.btn.btn-danger(type="submit") Eliminar
+
+        if post.Tags && post.Tags.length > 0
+
+          .post-tags.detail-tags
+
+            each tag in post.Tags
+              a.tag(href=`/search?tag=${encodeURIComponent(tag.name)}`)
+                | ##{tag.name}
+
+
+      // IMAGENES
+      if post.Images && post.Images.length > 0
+
+        .detail-gallery
+
+          each image in post.Images
+
+            .detail-image-card
+
+              img.detail-image(
+                src=`/images/${image.id}/raw`
+                alt=post.title
+                loading="lazy"
+              )
+
+              .image-information
+
+                .image-license
+
+                  if image.license === 'free'
+                    span.license-free
+                      i.bi.bi-unlock
+                      | Libre de uso
+                  else
+                    span.license-copyright
+                      i.bi.bi-c-circle
+                      | Con copyright
+
+                if image.watermark_text
+                  small
+                    i.bi.bi-droplet
+                    | #{image.watermark_text}
+
+                a.image-view-button(href=`/images/${image.id}`)
+                  i.bi.bi-arrows-fullscreen
+                  | Ver imagen
+
+
+        // COLECCIONES
+        if user && collections && collections.length > 0
+
+          - const allImagesFree = post.Images.every(image => image.license === 'free')
+
+          if allImagesFree
+
+            .collection-box
+
+              .collection-box-header
+                .collection-icon
+                  i.bi.bi-bookmark
+
+                div
+                  strong Guardar publicación
+                  small Agregala a una de tus colecciones
+
+              details
+                summary.save-summary
+                  i.bi.bi-plus-lg
+                  | Elegir colección
+
+                .collection-options
+
+                  each collection in collections
+                    form(method="POST", action=`/collections/${collection.id}/posts/${post.id}`)
+
+                      button.collection-option(type="submit")
+                        i.bi.bi-folder
+                        span= collection.name
+                        i.bi.bi-chevron-right
+
+
+          else
+
+            .fotaza-alert.alert-warning
+              i.bi.bi-shield-exclamation
+              span
+                | Esta publicación contiene imágenes con copyright y no puede guardarse completa en una colección.
+
+
+      else
+
+        .empty-state
+          .empty-icon
+            i.bi.bi-image
+          h3 No hay imágenes disponibles
+          p Esta publicación no tiene imágenes visibles.
+
+
+      // VOLVER
+      a.back-link(href="/posts")
+        i.bi.bi-arrow-left
+        | Volver a publicaciones
+
 
   else
-    p Publicacion no encontrada
+
+    .empty-state
+      .empty-icon
+        i.bi.bi-search
+      h3 Publicación no encontrada
+      p La publicación que buscás no existe o ya no está disponible.
+
+      a.create-button(href="/posts")
+        i.bi.bi-arrow-left
+        | Volver a publicaciones
+
