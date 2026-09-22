@@ -2,20 +2,67 @@ extends ../layout
 
 block content
 
-  h1 Seguidores de #{profileUser.name}
+  .container.py-4
 
-  if followers.length === 0
-    p Este usuario no tiene seguidores.
 
-  each follow in followers
-    hr
+    .followers-header
 
-    if follow.followerUser
-      p Nombre: #{follow.followerUser.name}
-      p Email: #{follow.followerUser.email}
+      .followers-header-icon
+        i.bi.bi-people-fill
 
-      a.btn.btn-primary(href=`/profile/${follow.followerUser.id}`) Ver perfil
+      div
 
-  br
+        h1.mb-1 Seguidores de #{profileUser.name}
 
-  a.btn.btn-secondary(href=`/profile/${profileUser.id}`) Volver
+        p.text-muted.mb-0
+          | Personas que siguen a este usuario.
+
+    if followers.length === 0
+
+      .followers-empty
+
+        .followers-empty-icon
+          i.bi.bi-person-x
+
+        h3 No tiene seguidores
+
+        p
+          | Este usuario todavía no tiene seguidores.
+
+    else
+
+      .row.g-4
+
+        each follow in followers
+
+          if follow.followerUser
+
+            .col-12.col-md-6.col-lg-4
+
+              .follower-card
+
+                .follower-avatar
+                  i.bi.bi-person-fill
+
+                .follower-content
+
+                  h3= follow.followerUser.name
+
+                  p
+                    i.bi.bi-envelope.me-2
+                    | #{follow.followerUser.email}
+
+                a.btn.btn-primary.rounded-pill.w-100(
+                  href=`/profile/${follow.followerUser.id}`
+                )
+                  i.bi.bi-person.me-2
+                  | Ver perfil
+
+    .followers-back
+
+      a.btn.btn-outline-secondary.rounded-pill(
+        href=`/profile/${profileUser.id}`
+      )
+        i.bi.bi-arrow-left.me-2
+        | Volver al perfil
+

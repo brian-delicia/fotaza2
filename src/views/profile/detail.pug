@@ -2,48 +2,153 @@ extends ../layout
 
 block content
 
-  h1 Perfil de usuario
+  .container.py-4
 
-  if profileUser
-    p Nombre: #{profileUser.name}
-    p Email: #{profileUser.email}
 
-    p Seguidores: #{followersCount}
-    p Seguidos: #{followingCount}
+    if profileUser
 
-    a.btn.btn-secondary.me-2(href=`/profile/${profileUser.id}/followers`) Ver seguidores
-    a.btn.btn-secondary.me-2(href=`/profile/${profileUser.id}/following`) Ver seguidos
+      .profile-header
 
-    if user && user.id !== profileUser.id
-      if isFollowing
-        form.d-inline(method="POST", action=`/follows/${profileUser.id}/unfollow`)
-          button.btn.btn-danger(type="submit") Dejar de seguir
+        .profile-avatar
+          i.bi.bi-person-fill
+
+        .profile-info
+
+          h1.profile-name= profileUser.name
+
+          p.profile-email
+            i.bi.bi-envelope.me-2
+            | #{profileUser.email}
+
+          .profile-stats
+
+            a.profile-stat(
+              href=`/profile/${profileUser.id}/followers`
+            )
+              strong= followersCount
+              span Seguidores
+
+            a.profile-stat(
+              href=`/profile/${profileUser.id}/following`
+            )
+              strong= followingCount
+              span Siguiendo
+
+        .profile-actions
+
+          if user && user.id !== profileUser.id
+
+            if isFollowing
+
+              form(
+                method="POST"
+                action=`/follows/${profileUser.id}/unfollow`
+              )
+                button.btn.btn-outline-danger.rounded-pill.px-4(
+                  type="submit"
+                )
+                  i.bi.bi-person-dash.me-2
+                  | Dejar de seguir
+
+            else
+
+              form(
+                method="POST"
+                action=`/follows/${profileUser.id}`
+              )
+                button.btn.btn-primary.rounded-pill.px-4(
+                  type="submit"
+                )
+                  i.bi.bi-person-plus.me-2
+                  | Seguir
+
+      .profile-navigation
+
+        a.btn.btn-outline-secondary.rounded-pill(
+          href=`/profile/${profileUser.id}/followers`
+        )
+          i.bi.bi-people.me-2
+          | Seguidores
+
+        a.btn.btn-outline-secondary.rounded-pill(
+          href=`/profile/${profileUser.id}/following`
+        )
+          i.bi.bi-person-lines-fill.me-2
+          | Siguiendo
+
+      .profile-posts-header
+
+        h2
+          i.bi.bi-grid-3x3-gap-fill.me-2
+          | Publicaciones
+
+      if posts.length === 0
+
+        .profile-empty
+
+          .profile-empty-icon
+            i.bi.bi-images
+
+          h3 Sin publicaciones
+
+          p
+            | Este usuario todavía no tiene publicaciones.
+
       else
-        form.d-inline(method="POST", action=`/follows/${profileUser.id}`)
-          button.btn.btn-success(type="submit") Seguir
 
-    hr
+        .row.g-4
 
-    h2 Publicaciones
+          each post in posts
 
-    if posts.length === 0
-      p Este usuario no tiene publicaciones.
+            .col-12.col-md-6.col-xl-4
 
-    each post in posts
-      hr
+              .profile-post-card
 
-      h3= post.title
+                if post.Images && post.Images.length > 0
 
-      if post.description
-        p= post.description
+                  a.profile-post-image(
+                    href=`/posts/${post.id}`
+                  )
+                    img(
+                      src=`/images/${post.Images[0].id}/raw`
+                      alt=post.title
+                    )
 
-      if post.Images && post.Images.length > 0
-        img(src=`/images/${post.Images[0].id}/raw`, width="250")
+                else
 
-      br
-      br
+                  a.profile-post-image.profile-post-placeholder(
+                    href=`/posts/${post.id}`
+                  )
+                    i.bi.bi-image
 
-      a.btn.btn-primary(href=`/posts/${post.id}`) Ver publicacion
+                .profile-post-content
 
-  else
-    p Usuario no encontrado
+                  h3= post.title
+
+                  if post.description
+                    p= post.description
+
+                  a.btn.btn-primary.rounded-pill.w-100(
+                    href=`/posts/${post.id}`
+                  )
+                    i.bi.bi-eye.me-2
+                    | Ver publicación
+
+    else
+
+      .profile-not-found
+
+        .profile-not-found-icon
+          i.bi.bi-person-x
+
+        h2 Usuario no encontrado
+
+        p
+          | El perfil que estás buscando no existe.
+
+        a.btn.btn-primary.rounded-pill.px-4(
+          href="/posts"
+        )
+          i.bi.bi-house.me-2
+          | Volver a publicaciones
+

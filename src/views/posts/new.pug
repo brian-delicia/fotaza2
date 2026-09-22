@@ -1,16 +1,18 @@
-
 extends ../layout
 
 block content
 
   .form-page
 
+
     .form-page-header
+
       a.back-link(href="/posts")
         i.bi.bi-arrow-left
         | Volver a publicaciones
 
       .form-heading
+
         .form-heading-icon
           i.bi.bi-camera
 
@@ -21,28 +23,33 @@ block content
 
 
     if error
+
       .fotaza-alert.alert-danger
+
         i.bi.bi-exclamation-circle
+
         span= error
 
 
     form#postForm.fotaza-form(
       method="POST"
       action="/posts/new"
-      enctype="multipart/form-data"
     )
 
       // INFORMACION
       .form-section
 
         .form-section-header
+
           .section-number 01
+
           div
             h2 Información
             p Contanos un poco sobre tu publicación.
 
 
         .form-field
+
           label(for="title")
             | Título
             span.required *
@@ -60,6 +67,7 @@ block content
 
 
         .form-field
+
           label(for="description")
             | Descripción
 
@@ -71,11 +79,30 @@ block content
           )
 
 
+        .form-field
+
+          label(for="tags")
+            | Etiquetas
+            span.required *
+
+          input#tags.form-control(
+            type="text"
+            name="tags"
+            placeholder="Ej: naturaleza, paisaje, atardecer"
+            required
+          )
+
+          small.form-help
+            | Separá las etiquetas utilizando comas.
+
+
       // IMAGENES
       .form-section
 
         .form-section-header
+
           .section-number 02
+
           div
             h2 Tus fotografías
             p Subí una o varias imágenes para crear tu publicación.
@@ -97,6 +124,88 @@ block content
 
         input#images.image-input(
           type="file"
-          name="images"
-          accept="image
+          accept="image/*"
+          multiple
+        )
 
+
+        #previewContainer.preview-container
+
+
+      // LICENCIA
+      .form-section
+
+        .form-section-header
+
+          .section-number 03
+
+          div
+            h2 Licencia y protección
+            p Elegí cómo querés compartir tus fotografías.
+
+
+        .form-field
+
+          label(for="license")
+            | Licencia
+            span.required *
+
+          select#license.form-select(
+            name="license"
+            required
+          )
+
+            option(value="") Seleccioná una licencia
+            option(value="free") Uso libre
+            option(value="copyright") Copyright
+
+
+        .license-info
+
+          i.bi.bi-info-circle
+
+          div
+            strong ¿Qué significa?
+
+            p
+              | Si elegís Copyright, podés agregar un texto de marca de agua
+              | para identificar tu fotografía.
+
+
+        .form-field#watermarkField(style="display:none;")
+
+          label(for="watermark_text")
+            | Texto de marca de agua
+
+          input#watermark_text.form-control(
+            type="text"
+            placeholder="Ej: © Mi nombre"
+            maxlength="100"
+          )
+
+          small.form-help
+            | Este texto se guardará como información de protección de la imagen.
+
+
+      // CONFIRMACION
+      .form-section
+
+        .form-section-header
+
+          .section-number 04
+
+          div
+            h2 Confirmar publicación
+            p Revisá los datos antes de compartirla.
+
+
+        
+        button.btn.btn-primary.btn-lg.w-100#publishButton(
+          type="submit"
+        )
+
+          i.bi.bi-cloud-upload.me-2
+          | Publicar fotografía
+
+
+    script(src="/js/newPost.js")

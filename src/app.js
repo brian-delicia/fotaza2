@@ -44,7 +44,7 @@ app.use(session({                       //permite mantener los usuarios loguedos
     resave:false,
     saveUninitialized:false,
     cookie:{
-        secure:true,     //producion cambiar a true
+        secure:process.env.NODE_ENV === 'production',     //producion cambiar a true
         maxAge:24*60*60*1000 //24hs
     }
 }))
