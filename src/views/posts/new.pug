@@ -1,211 +1,192 @@
+
 extends ../layout
 
-block content
+  block content
 
-  .form-page
+    .form-page
 
+      .form-page-header
+        a.back-link(href="/posts")
+          i.bi.bi-arrow-left
+          | Volver a publicaciones
 
-    .form-page-header
-
-      a.back-link(href="/posts")
-        i.bi.bi-arrow-left
-        | Volver a publicaciones
-
-      .form-heading
-
-        .form-heading-icon
-          i.bi.bi-camera
-
-        div
-          span.section-kicker Nueva publicación
-          h1 Compartí una fotografía
-          p Mostrá tu trabajo a la comunidad de Fotaza.
-
-
-    if error
-
-      .fotaza-alert.alert-danger
-
-        i.bi.bi-exclamation-circle
-
-        span= error
-
-
-    form#postForm.fotaza-form(
-      method="POST"
-      action="/posts/new"
-    )
-
-      // INFORMACION
-      .form-section
-
-        .form-section-header
-
-          .section-number 01
+        .form-heading
+          .form-heading-icon
+            i.bi.bi-camera
 
           div
-            h2 Información
-            p Contanos un poco sobre tu publicación.
+            span.section-kicker Nueva publicación
+            h1 Compartí una fotografía
+            p Mostrá tu trabajo a la comunidad de Fotaza.
 
 
-        .form-field
+      if error
+        .fotaza-alert.alert-danger
+          i.bi.bi-exclamation-circle
+          span= error
 
-          label(for="title")
-            | Título
-            span.required *
 
-          input#title.form-control(
-            type="text"
-            name="title"
-            placeholder="Ej: Atardecer en las sierras"
+      form#postForm.fotaza-form(
+        method="POST"
+        action="/posts/new"
+        enctype="multipart/form-data"
+      )
+
+        // INFORMACION
+        .form-section
+
+          .form-section-header
+            .section-number 01
+            div
+              h2 Información
+              p Contanos un poco sobre tu publicación.
+
+
+          .form-field
+            label(for="title")
+              | Título
+              span.required *
+
+            input#title.form-control(
+              type="text"
+              name="title"
+              placeholder="Ej: Atardecer en las sierras"
+              required
+              maxlength="100"
+            )
+
+            small.form-help
+              | Elegí un título corto y descriptivo.
+
+
+          .form-field
+            label(for="description")
+              | Descripción
+
+            textarea#description.form-control(
+              name="description"
+              rows="5"
+              maxlength="1000"
+              placeholder="Contá la historia detrás de esta fotografía..."
+            )
+
+
+        // IMAGENES
+        .form-section
+
+          .form-section-header
+            .section-number 02
+            div
+              h2 Tus fotografías
+              p Subí una o varias imágenes para crear tu publicación.
+
+
+          label.upload-area(for="images")
+
+            .upload-icon
+              i.bi.bi-cloud-arrow-up
+
+            strong Subí tus fotografías
+
+            span
+              | Arrastrá tus imágenes acá o hacé clic para seleccionarlas.
+
+            small
+              | Podés seleccionar varias imágenes.
+
+
+          input#images.image-input(
+            type="file"
+            name="images"
+            accept="image/jpeg,image/png,image/webp"
+            multiple
             required
-            maxlength="100"
-          )
-
-          small.form-help
-            | Elegí un título corto y descriptivo.
-
-
-        .form-field
-
-          label(for="description")
-            | Descripción
-
-          textarea#description.form-control(
-            name="description"
-            rows="5"
-            maxlength="1000"
-            placeholder="Contá la historia detrás de esta fotografía..."
           )
 
 
-        .form-field
-
-          label(for="tags")
-            | Etiquetas
-            span.required *
-
-          input#tags.form-control(
-            type="text"
-            name="tags"
-            placeholder="Ej: naturaleza, paisaje, atardecer"
-            required
-          )
-
-          small.form-help
-            | Separá las etiquetas utilizando comas.
+          #imagePreview.image-preview
 
 
-      // IMAGENES
-      .form-section
+        // ETIQUETAS
+        .form-section
 
-        .form-section-header
-
-          .section-number 02
-
-          div
-            h2 Tus fotografías
-            p Subí una o varias imágenes para crear tu publicación.
+          .form-section-header
+            .section-number 03
+            div
+              h2 Etiquetas
+              p Ayudá a otros usuarios a descubrir tu fotografía.
 
 
-        label.upload-area(for="images")
+          .form-field
 
-          .upload-icon
+            label(for="tags")
+              | Etiquetas
+
+            input#tags.form-control(
+              type="text"
+              name="tags"
+              placeholder="naturaleza, paisaje, fotografía..."
+            )
+
+            small.form-help
+              | Separá las etiquetas con comas.
+
+
+        // LICENCIA
+        .form-section
+
+          .form-section-header
+            .section-number 04
+            div
+              h2 Derechos de uso
+              p Indicá qué pueden hacer otros usuarios con tus fotografías.
+
+
+          .license-options
+
+            label.license-card
+
+              input(
+                type="radio"
+                name="license"
+                value="free"
+                checked
+              )
+
+              .license-card-content
+                .license-icon.free
+                  i.bi.bi-unlock
+
+                div
+                  strong Libre de uso
+                  span
+                    | Otros usuarios pueden guardar y utilizar la imagen según las condiciones de Fotaza.
+
+
+            label.license-card
+
+              input(
+                type="radio"
+                name="license"
+                value="copyright"
+              )
+
+              .license-card-content
+                .license-icon.copyright
+                  i.bi.bi-c-circle
+
+                div
+                  strong Todos los derechos reservados
+                  span
+                    | La imagen pertenece a su autor y no puede utilizarse libremente.
+
+
+        // BOTONES
+        .form-actions
+
+          a.cancel-form(href="/posts")
+            | Cancelar
+
+          button.submit-form(type="submit")
             i.bi.bi-cloud-arrow-up
-
-          strong Subí tus fotografías
-
-          span
-            | Arrastrá tus imágenes acá o hacé clic para seleccionarlas.
-
-          small
-            | Podés seleccionar varias imágenes.
-
-
-        input#images.image-input(
-          type="file"
-          accept="image/*"
-          multiple
-        )
-
-
-        #previewContainer.preview-container
-
-
-      // LICENCIA
-      .form-section
-
-        .form-section-header
-
-          .section-number 03
-
-          div
-            h2 Licencia y protección
-            p Elegí cómo querés compartir tus fotografías.
-
-
-        .form-field
-
-          label(for="license")
-            | Licencia
-            span.required *
-
-          select#license.form-select(
-            name="license"
-            required
-          )
-
-            option(value="") Seleccioná una licencia
-            option(value="free") Uso libre
-            option(value="copyright") Copyright
-
-
-        .license-info
-
-          i.bi.bi-info-circle
-
-          div
-            strong ¿Qué significa?
-
-            p
-              | Si elegís Copyright, podés agregar un texto de marca de agua
-              | para identificar tu fotografía.
-
-
-        .form-field#watermarkField(style="display:none;")
-
-          label(for="watermark_text")
-            | Texto de marca de agua
-
-          input#watermark_text.form-control(
-            type="text"
-            placeholder="Ej: © Mi nombre"
-            maxlength="100"
-          )
-
-          small.form-help
-            | Este texto se guardará como información de protección de la imagen.
-
-
-      // CONFIRMACION
-      .form-section
-
-        .form-section-header
-
-          .section-number 04
-
-          div
-            h2 Confirmar publicación
-            p Revisá los datos antes de compartirla.
-
-
-        
-        button.btn.btn-primary.btn-lg.w-100#publishButton(
-          type="submit"
-        )
-
-          i.bi.bi-cloud-upload.me-2
-          | Publicar fotografía
-
-
-    script(src="/js/newPost.js")
+            | Publicar fotografía

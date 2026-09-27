@@ -1,145 +1,408 @@
 extends ../layout
 
-block content
-  if successMessage
-     .alert.alert-success
-       = successMessage
-  if errorMessage
-     .alert.alert-warning
-        = errorMessage
+  block content
 
-  h1 Detalle de imagen
+    .image-detail-page
 
-  if image
-    img(src=`/images/${image.id}/raw`, width="400")
+      a.back-link(href="/posts")
+        i.bi.bi-arrow-left
+        | Volver a publicaciones
 
-    p Licencia: #{image.license}
-    
-    if user && collections && collections.length > 0
-      if image.license === 'free'
-        hr
+      if successMessage
+        .alert.alert-success.fotaza-alert
+          i.bi.bi-check-circle-fill.me-2
+          = successMessage
 
-        details
-          summary.btn.btn-secondary.mb-2
-            Guardar Guardar en colección
-        
+      if errorMessage
+        .alert.alert-warning.fotaza-alert
+          i.bi.bi-exclamation-triangle-fill.me-2
+          = errorMessage
 
-          each collection in collections
-            form.d-inline(method="POST", action=`/collections/${collection.id}/images/${image.id}`)
-              button.btn.btn-secondary.me-2(type="submit")
-                Guardar en #{collection.name}
+      if image
+
+        .image-detail-layout
+
+          // ====================================================
+          // IMAGEN
+          // ====================================================
+
+          section.image-viewer
+
+            .image-viewer-frame
+
+              img.image-detail-photo(
+                src=`/images/${image.id}/raw`,
+                alt="Fotografía de Fotaza"
+              )
+
+            if image.watermark_text
+              .watermark-info
+                i.bi.bi-shield-check.me-1
+                | Marca de agua: #{image.watermark_text}
 
 
-      else
-        hr
+          // ====================================================
+          // INFORMACIÓN
+          // ====================================================
+
+          aside.image-detail-sidebar
+
+            .image-detail-heading
+
+              .section-kicker Fotografía
+
+              h1 Detalle de imagen
+
+              if image.Post
+                a.image-post-link(
+                  href=`/posts/${image.Post.id}`
+                )
+                  i.bi.bi-arrow-up-right-square.me-1
+                  | Ver publicación
 
 
-        .alert.alert-warning
-            | Esta imagen tiene copyright. Para guardarla o utilizarla debe contactar al autor mediante "Me interesa".
+            // LICENCIA
+
+            .image-info-box
+
+              span.image-info-label
+                i.bi.bi-shield-check
+                | Licencia
+
+              if image.license === 'free'
+
+                .license-badge.license-free
+                  i.bi.bi-check-circle-fill
+                  | Sin copyright
+
+              else
+
+                .license-badge.license-copyright
+                  i.bi.bi-lock-fill
+                  | Copyright
 
 
-    if image.watermark_text
-      p Marca de agua: #{image.watermark_text}
+            // AUTOR
 
-    p Promedio: #{ratingAverage}
-    p Cantidad de valoraciones: #{ratingCount}
+            if image.Post && image.Post.User
 
-    if image.Post
-      p Publicacion:
-        a(href=`/posts/${image.Post.id}`)  #{image.Post.title}
+              .image-author-box
 
-      if image.Post.User
-        p Autor:
-          a(href=`/profile/${image.Post.User.id}`)  #{image.Post.User.name}
+                span.image-info-label Autor
 
-    if user
-      h3 Valorar imagen
-        if user
-           form(method="POST", action=`/ratings/images/${image.id}`)
-             select.form-control.mb-2(name="value", required)
-               option(value="1") 1
-               option(value="2") 2
-               option(value="3") 3
-               option(value="4") 4
-               option(value="5") 5
+                a.image-author(
+                  href=`/profile/${image.Post.User.id}`
+                )
 
-             button.btn.btn-primary(type="submit") Valorar
-        else 
-             .alert.alert-info
-               | Debe iniciar sesion para valorar imagenes.
-      h3 Me interesa
-        if user
-          form(method="POST", action=`/interests/images/${image.id}`)
-            button.btn.btn-success(type="submit") Me interesa
-        else 
-          .alert.alert-info
-            | Debe iniciar sesion para marcar interes.
-      h3 Denunciar imagen
-        if user
-           form(method="POST", action=`/reports/images/${image.id}`)
-             label Motivo
-             input.form-control.mb-2(type="text", name="reason", required)
+                  span.image-author-avatar
+                    i.bi.bi-person-fill
 
-             label Descripcion
-             textarea.form-control.mb-2(name="description", required)
+                  span= image.Post.User.name
 
-             button.btn.btn-danger(type="submit") Denunciar
-        else
-           .alert.alert-info
-             | Debe iniciar sesion para denunciar contenido.
 
-      if image.Post && image.Post.user_id === user.id && image.comments_open
-        form(method="POST", action=`/images/${image.id}/close-comments`)
-          button.btn.btn-warning(type="submit") Cerrar comentarios
+            // VALORACIÓN
 
-    hr
+            .image-rating-box
 
-    h3 Comentarios
+              .image-info-label
+                i.bi.bi-star-fill
+                | Valoración
 
-    if image.comments_open
-      if user
-        form(method="POST" action=`/comments/images/${image.id}`)
-           textarea.form-control.mb-2(name="content")
-           button.btn.btn-primary(type="submit") Comentar
-      else
-         .alert.alert-info
-          | Debe iniciar sesion para comentar.
-    else
-      p Los comentarios estan cerrados.
+              .rating-summary
 
-    if comments && comments.length > 0
-      each comment in comments
-        hr
-        if comment.User
-          p Usuario: #{comment.User.name}
+                .rating-number= ratingAverage || 0
 
-        p= comment.content
+                .rating-stars
+                  - const average = Number(ratingAverage) || 0
+                  - for (let i = 1; i <= 5; i++)
+                    if i <= Math.round(average)
+                      i.bi.bi-star-fill
+                    else
+                      i.bi.bi-star
 
-        if user && user.id !== comment.user_id
+                span.rating-count
+                  | #{ratingCount || 0} valoración#{ratingCount === 1 ? '' : 'es'}
 
-           details.mt-2
-             summary.btn.btn-sm.btn-outline-danger
-                Denunciar Denunciar
 
-             form.mt-2(method="POST", action=`/reports/comments/${comment.id}`)
+            // GUARDAR EN COLECCIÓN
 
-                label Motivo
-                input.form-control.mb-2(
-                  type="text"
-                  name="reason"
-                  required
+            if user && collections && collections.length > 0
+
+              if image.license === 'free'
+
+                .image-action-box
+
+                  .image-action-title
+                    i.bi.bi-bookmark-heart
+                    | Guardar en colección
+
+                  details.collection-details
+
+                    summary.btn.btn-outline-primary.w-100
+                      i.bi.bi-bookmark-plus.me-1
+                      | Elegir colección
+
+                    .collection-save-list
+
+                      each collection in collections
+
+                        form(
+                          method="POST",
+                          action=`/collections/${collection.id}/images/${image.id}`
+                        )
+
+                          button.btn.btn-light.collection-save-button(
+                            type="submit"
+                          )
+                            i.bi.bi-bookmark.me-1
+                            = collection.name
+
+              else
+
+                .alert.alert-warning.image-warning
+                  i.bi.bi-shield-lock-fill.me-2
+                  | Esta imagen tiene copyright. Para guardarla o utilizarla debés contactar al autor mediante "Me interesa".
+
+
+            // ACCIONES DEL USUARIO
+
+            if user
+
+              .image-actions
+
+                // VALORAR
+
+                .image-action-box
+
+                  .image-action-title
+                    i.bi.bi-star
+                    | Valorar imagen
+
+                  form(
+                    method="POST",
+                    action=`/ratings/images/${image.id}`
                   )
 
-                label Descripcion
-                textarea.form-control.mb-2(
-                   name="description"
-                   required
+                    select.form-select.mb-2(
+                      name="value",
+                      required
+                    )
+                      option(value="") Elegí una valoración
+                      option(value="1") ★ 1
+                      option(value="2") ★ 2
+                      option(value="3") ★ 3
+                      option(value="4") ★ 4
+                      option(value="5") ★ 5
+
+                    button.btn.btn-primary.w-100(
+                      type="submit"
+                    )
+                      i.bi.bi-star-fill.me-1
+                      | Valorar
+
+
+                // ME INTERESA
+
+                .image-action-box
+
+                  .image-action-title
+                    i.bi.bi-heart
+                    | ¿Te interesa esta fotografía?
+
+                  p.image-action-description
+                    | Contactá al autor para consultar por esta imagen.
+
+                  form(
+                    method="POST",
+                    action=`/interests/images/${image.id}`
+                  )
+
+                    button.btn.btn-success.w-100(
+                      type="submit"
+                    )
+                      i.bi.bi-chat-heart.me-1
+                      | Me interesa
+
+
+                // DENUNCIAR
+
+                details.report-details
+
+                  summary.btn.btn-outline-danger.w-100
+                    i.bi.bi-flag.me-1
+                    | Denunciar imagen
+
+                  form.report-form(
+                    method="POST",
+                    action=`/reports/images/${image.id}`
+                  )
+
+                    label.form-label(for="image-report-reason")
+                      | Motivo
+
+                    input#image-report-reason.form-control.mb-2(
+                      type="text",
+                      name="reason",
+                      required
                     )
 
-                button.btn.btn-danger(type="submit")
-                   Enviar Enviar
-    else
-      p No hay comentarios.
+                    label.form-label(for="image-report-description")
+                      | Descripción
 
-  else
-    p Imagen no encontrada
+                    textarea#image-report-description.form-control.mb-2(
+                      name="description",
+                      rows="3",
+                      required
+                    )
+
+                    button.btn.btn-danger.w-100(
+                      type="submit"
+                    )
+                      i.bi.bi-send.me-1
+                      | Enviar denuncia
+
+
+                // CERRAR COMENTARIOS
+
+                if image.Post && image.Post.user_id === user.id && image.comments_open
+
+                  form(
+                    method="POST",
+                    action=`/images/${image.id}/close-comments`
+                  )
+
+                    button.btn.btn-warning.w-100(
+                      type="submit"
+                    )
+                      i.bi.bi-chat-square-dots.me-1
+                      | Cerrar comentarios
+
+
+      // ========================================================
+      // COMENTARIOS
+      // ========================================================
+
+      section.image-comments-section
+
+        .comments-header
+
+          div
+            .section-kicker Comunidad
+            h2 Comentarios
+
+          if comments && comments.length > 0
+            span.comments-count
+              | #{comments.length}
+
+        if image.comments_open
+
+          if user
+
+            form.comment-form(
+              method="POST",
+              action=`/comments/images/${image.id}`
+            )
+
+              textarea.form-control(
+                name="content",
+                rows="3",
+                placeholder="Escribí un comentario...",
+                required
+              )
+
+              .comment-form-actions
+                button.btn.btn-primary(
+                  type="submit"
+                )
+                  i.bi.bi-send.me-1
+                  | Comentar
+
+          else
+
+            .alert.alert-info
+              i.bi.bi-info-circle.me-2
+              | Debés iniciar sesión para comentar.
+
+        else
+
+          .comments-closed
+            i.bi.bi-chat-square-text
+            div
+              strong Comentarios cerrados
+              p El autor desactivó los comentarios de esta imagen.
+
+
+        if comments && comments.length > 0
+
+          .comments-list
+
+            each comment in comments
+
+              article.comment-card
+
+                .comment-avatar
+                  i.bi.bi-person-fill
+
+                .comment-content
+
+                  .comment-header
+
+                    if comment.User
+                      a(
+                        href=`/profile/${comment.User.id}`
+                      )= comment.User.name
+
+                    if comment.created_at
+                      time= comment.created_at
+
+                  p.comment-text= comment.content
+
+                  if user && user.id !== comment.user_id
+
+                    details.comment-report
+
+                      summary
+                        i.bi.bi-flag.me-1
+                        | Denunciar
+
+                      form(
+                        method="POST",
+                        action=`/reports/comments/${comment.id}`
+                      )
+
+                        input.form-control.mb-2(
+                          type="text",
+                          name="reason",
+                          placeholder="Motivo",
+                          required
+                        )
+
+                        textarea.form-control.mb-2(
+                          name="description",
+                          rows="2",
+                          placeholder="Descripción",
+                          required
+                        )
+
+                        button.btn.btn-sm.btn-danger(
+                          type="submit"
+                        )
+                          i.bi.bi-send.me-1
+                          | Enviar
+
+        else
+
+          .comments-empty
+            i.bi.bi-chat-square
+            h3 Todavía no hay comentarios
+            p Sé el primero en comentar esta fotografía.
+
+      else
+
+        .empty-state
+          .empty-state-icon
+            i.bi.bi-image
+          h2 Imagen no encontrada
+          p La imagen que buscás no existe o ya no está disponible.
+          a.btn.btn-primary(href="/posts")
+            | Volver a publicaciones

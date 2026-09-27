@@ -1,96 +1,83 @@
-```pug
 extends ../layout
 
-block content
+  block content
 
-  .container.py-4
+    .following-page
 
-    //- ENCABEZADO
-    .following-header
+      .following-header
+        .section-kicker
+          i.bi.bi-people-fill
+          | Tu comunidad
 
-      .following-header-icon
-        i.bi.bi-people-fill
+        h1 Publicaciones de usuarios que sigo
+        p Descubrí las últimas fotografías de las personas que seguís en Fotaza.
 
-      div
-        h1.mb-1 Publicaciones de usuarios que sigo
-        p.text-muted.mb-0
-          | Descubrí las últimas publicaciones de las personas que seguís.
+        a.btn.btn-outline-primary.mt-3(href="/posts")
+          i.bi.bi-compass.me-1
+          | Explorar todas las publicaciones
 
-    //- ERROR
-    if error
-      .alert.alert-danger.d-flex.align-items-center.mb-4(role="alert")
-        i.bi.bi-exclamation-triangle-fill.me-2
-        span= error
+      if error
+        .alert.alert-danger.fotaza-alert
+          i.bi.bi-exclamation-triangle-fill.me-2
+          = error
 
-    //- SIN PUBLICACIONES
-    if posts.length === 0
+      if posts.length === 0
 
-      .following-empty
+        .following-empty
+          .following-empty-icon
+            i.bi.bi-people
+          h2 Todavía no hay publicaciones
+          p
+            | Las publicaciones de los usuarios que sigas aparecerán en este espacio.
+          a.btn.btn-primary(href="/search")
+            i.bi.bi-search.me-1
+            | Buscar fotógrafos
 
-        .following-empty-icon
-          i.bi.bi-images
+      else
 
-        h3 No hay publicaciones todavía
+        .following-grid
 
-        p.text-muted
-          | Los usuarios que seguís todavía no tienen publicaciones disponibles.
+          each post in posts
 
-    //- PUBLICACIONES
-    else
+            article.following-card
 
-      .row.g-4
+              .following-card-header
 
-        each post in posts
+                if post.User
+                  a.following-author(
+                    href=`/profile/${post.User.id}`
+                  )
+                    span.following-avatar
+                      i.bi.bi-person-fill
 
-          .col-12.col-md-6.col-xl-4
+                    span= post.User.name
 
-            .following-post-card
-
-              //- IMAGEN
               if post.Images && post.Images.length > 0
 
-                a.following-post-image(
+                a.following-image-link(
                   href=`/posts/${post.id}`
                 )
 
-                  img(
-                    src=`/images/${post.Images[0].id}/raw`
+                  img.following-image(
+                    src=`/images/${post.Images[0].id}/raw`,
                     alt=post.title
                   )
 
-              else
+                  if post.Images.length > 1
+                    span.following-image-count
+                      i.bi.bi-images.me-1
+                      | #{post.Images.length}
 
-                a.following-post-image.following-post-placeholder(
-                  href=`/posts/${post.id}`
-                )
-                  i.bi.bi-image
+              .following-card-body
 
-              //- CONTENIDO
-              .following-post-content
+                h2
+                  a(href=`/posts/${post.id}`)= post.title
 
-                //- AUTOR
-                if post.User
-
-                  .following-post-author
-
-                    .following-author-avatar
-                      i.bi.bi-person-fill
-
-                    div
-                      span.following-author-label Publicado por
-                      span.following-author-name= post.User.name
-
-                //- TÍTULO
-                h3= post.title
-
-                //- DESCRIPCIÓN
                 if post.description
                   p= post.description
 
-                //- BOTÓN
-                a.btn.btn-primary.rounded-pill.w-100.mt-auto(
+                a.following-view-link(
                   href=`/posts/${post.id}`
                 )
-                  i.bi.bi-eye.me-2
                   | Ver publicación
-
+                  i.bi.bi-arrow-right

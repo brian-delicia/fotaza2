@@ -1,61 +1,200 @@
 extends ../layout
 
-block content
+  block content
 
-  h1 Buscador
+    .search-page
 
-  if error
-    p.text-danger= error
+      .search-header
+        .section-kicker
+          i.bi.bi-compass
+          | Explorar Fotaza
 
-  form(method="GET", action="/search")
-    label Texto
-    input.form-control.mb-2(type="text", name="q", value=filters.q)
+        h1 Descubrí nuevas fotografías
+        p
+          | Buscá publicaciones, fotógrafos y contenido según tus intereses.
 
-    label Etiqueta
-    input.form-control.mb-2(type="text", name="tag", value=filters.tag)
+      if error
+        .alert.alert-danger.fotaza-alert
+          i.bi.bi-exclamation-triangle-fill.me-2
+          = error
 
-    label Autor
-    input.form-control.mb-2(type="text", name="author", value=filters.author)
+      .search-layout
 
-    label Licencia
-    select.form-control.mb-2(name="license")
-      option(value="") Todas
-      option(value="free", selected=filters.license === 'free') Sin copyright
-      option(value="copyright", selected=filters.license === 'copyright') Con copyright
+        // ======================================================
+        // FILTROS
+        // ======================================================
 
-    label Valoracion minima
-    select.form-control.mb-2(name="minRating")
-      option(value="") Cualquiera
-      option(value="1", selected=filters.minRating === '1') 1
-      option(value="2", selected=filters.minRating === '2') 2
-      option(value="3", selected=filters.minRating === '3') 3
-      option(value="4", selected=filters.minRating === '4') 4
-      option(value="5", selected=filters.minRating === '5') 5
+        aside.search-filters
 
-    button.btn.btn-primary(type="submit") Buscar
+          .search-filter-header
+            .search-filter-icon
+              i.bi.bi-sliders
 
-  hr
+            div
+              h2 Filtros
+              span Refiná tu búsqueda
 
-  h2 Resultados
+          form(method="GET", action="/search")
 
-  if posts.length === 0
-    p No se encontraron resultados.
+            .search-field
+              label(for="search-q")
+                i.bi.bi-search
+                | Texto
 
-  each post in posts
-    hr
+              input#search-q.form-control(
+                type="text",
+                name="q",
+                value=filters.q || '',
+                placeholder="Título o descripción..."
+              )
 
-    h3= post.title
+            .search-field
+              label(for="search-tag")
+                i.bi.bi-hash
+                | Etiqueta
 
-    if post.User
-      p Autor: #{post.User.name}
+              input#search-tag.form-control(
+                type="text",
+                name="tag",
+                value=filters.tag || '',
+                placeholder="Ej. naturaleza"
+              )
 
-    if post.description
-      p= post.description
+            .search-field
+              label(for="search-author")
+                i.bi.bi-person
+                | Autor
 
-    if post.Images && post.Images.length > 0
-      img(src=`/images/${post.Images[0].id}/raw`, width="250")
+              input#search-author.form-control(
+                type="text",
+                name="author",
+                value=filters.author || '',
+                placeholder="Nombre del fotógrafo..."
+              )
 
-    br
-    br
+            .search-field
+              label(for="search-license")
+                i.bi.bi-shield-check
+                | Licencia
 
-    a.btn.btn-primary(href=`/posts/${post.id}`) Ver publicacion
+              select#search-license.form-select(name="license")
+                option(value="") Todas las licencias
+                option(
+                  value="free",
+                  selected=filters.license === 'free'
+                ) Sin copyright
+                option(
+                  value="copyright",
+                  selected=filters.license === 'copyright'
+                ) Con copyright
+
+            .search-field
+              label(for="search-rating")
+                i.bi.bi-star
+                | Valoración mínima
+
+              select#search-rating.form-select(name="minRating")
+                option(value="") Cualquier valoración
+                option(
+                  value="1",
+                  selected=filters.minRating === '1'
+                ) 1 estrella o más
+                option(
+                  value="2",
+                  selected=filters.minRating === '2'
+                ) 2 estrellas o más
+                option(
+                  value="3",
+                  selected=filters.minRating === '3'
+                ) 3 estrellas o más
+                option(
+                  value="4",
+                  selected=filters.minRating === '4'
+                ) 4 estrellas o más
+                option(
+                  value="5",
+                  selected=filters.minRating === '5'
+                ) 5 estrellas
+
+            .search-filter-actions
+              button.btn.btn-primary.w-100(type="submit")
+                i.bi.bi-search.me-2
+                | Buscar
+
+              a.btn.btn-outline-secondary.w-100(href="/search")
+                i.bi.bi-arrow-counterclockwise.me-2
+                | Limpiar filtros
+
+
+        // ======================================================
+        // RESULTADOS
+        // ======================================================
+
+        section.search-results
+
+          .search-results-header
+            div
+              span.section-kicker Resultados
+              h2 Fotografías encontradas
+
+            if posts.length > 0
+              span.results-count
+                | #{posts.length} resultado#{posts.length === 1 ? '' : 's'}
+
+          if posts.length === 0
+
+            .search-empty
+              .search-empty-icon
+                i.bi.bi-search
+              h3 No encontramos fotografías
+              p
+                | Probá modificando los filtros o utilizando términos diferentes.
+              a.btn.btn-primary(href="/search")
+                i.bi.bi-arrow-counterclockwise.me-1
+                | Limpiar búsqueda
+
+          else
+
+            .search-grid
+
+              each post in posts
+                if post.Images && post.Images.length > 0
+
+                  article.search-card
+
+                    a.search-image-link(href=`/posts/${post.id}`)
+                      img.search-image(
+                        src=`/images/${post.Images[0].id}/raw`,
+                        alt=post.title
+                      )
+
+                      if post.Images.length > 1
+                        span.search-image-count
+                          i.bi.bi-images.me-1
+                          | #{post.Images.length}
+
+                    .search-card-body
+
+                      if post.User
+                        a.search-author(href=`/profile/${post.User.id}`)
+                          span.search-author-avatar
+                            i.bi.bi-person-fill
+                          span= post.User.name
+
+                      h3.search-card-title
+                        a(href=`/posts/${post.id}`)= post.title
+
+                      if post.description
+                        p.search-card-description= post.description
+
+                      if post.Tags && post.Tags.length > 0
+                        .search-tags
+                          each tag in post.Tags
+                            a.search-tag(
+                              href=`/search?tag=${encodeURIComponent(tag.name)}`
+                            )
+                              | ##{tag.name}
+
+                      a.search-view-link(href=`/posts/${post.id}`)
+                        | Ver publicación
+                        i.bi.bi-arrow-right

@@ -1,188 +1,187 @@
 
 extends ../layout
 
-block content
+  block content
 
-  if successMessage
-    .fotaza-alert.alert-success
-      i.bi.bi-check-circle
-      span= successMessage
+    if successMessage
+      .fotaza-alert.alert-success
+        i.bi.bi-check-circle
+        span= successMessage
 
-  if error
-    .fotaza-alert.alert-danger
-      i.bi.bi-exclamation-circle
-      span= error
+    if error
+      .fotaza-alert.alert-danger
+        i.bi.bi-exclamation-circle
+        span= error
 
-  if errorMessage
-    .fotaza-alert.alert-warning
-      i.bi.bi-exclamation-triangle
-      span= errorMessage
-
-
-  if post
-
-    .post-detail
-
-      // CABECERA
-      .detail-header
-
-        .detail-author
-
-          if post.User
-            a.author-avatar.large(href=`/profile/${post.User.id}`)
-              i.bi.bi-person-fill
-
-            .detail-author-info
-              span Publicado por
-              a(href=`/profile/${post.User.id}`)
-                strong= post.User.name
-
-          else
-            .author-avatar.large
-              i.bi.bi-person-fill
-
-            .detail-author-info
-              span Publicado por
-              strong Usuario
+    if errorMessage
+      .fotaza-alert.alert-warning
+        i.bi.bi-exclamation-triangle
+        span= errorMessage
 
 
-        if user && user.id === post.user_id && !post.locked_by_report
+    if post
 
-          .detail-owner-actions
+      .post-detail
 
-            a.icon-action(href=`/posts/${post.id}/edit`, title="Editar")
-              i.bi.bi-pencil
+        // CABECERA
+        .detail-header
 
-            form(method="POST", action=`/posts/${post.id}/delete`)
-              button.icon-action.danger(
-                type="submit"
-                title="Eliminar"
-                onclick="return confirm('¿Eliminar esta publicación?')"
-              )
-                i.bi.bi-trash
+          .detail-author
 
+            if post.User
+              a.author-avatar.large(href=`/profile/${post.User.id}`)
+                i.bi.bi-person-fill
 
-      // TITULO
-      .detail-title-section
+              .detail-author-info
+                span Publicado por
+                a(href=`/profile/${post.User.id}`)
+                  strong= post.User.name
 
-        h1= post.title
+            else
+              .author-avatar.large
+                i.bi.bi-person-fill
 
-        if post.description
-          p= post.description
-
-
-        if post.Tags && post.Tags.length > 0
-
-          .post-tags.detail-tags
-
-            each tag in post.Tags
-              a.tag(href=`/search?tag=${encodeURIComponent(tag.name)}`)
-                | ##{tag.name}
+              .detail-author-info
+                span Publicado por
+                strong Usuario
 
 
-      // IMAGENES
-      if post.Images && post.Images.length > 0
+          if user && user.id === post.user_id && !post.locked_by_report
 
-        .detail-gallery
+            .detail-owner-actions
 
-          each image in post.Images
+              a.icon-action(href=`/posts/${post.id}/edit`, title="Editar")
+                i.bi.bi-pencil
 
-            .detail-image-card
-
-              img.detail-image(
-                src=`/images/${image.id}/raw`
-                alt=post.title
-                loading="lazy"
-              )
-
-              .image-information
-
-                .image-license
-
-                  if image.license === 'free'
-                    span.license-free
-                      i.bi.bi-unlock
-                      | Libre de uso
-                  else
-                    span.license-copyright
-                      i.bi.bi-c-circle
-                      | Con copyright
-
-                if image.watermark_text
-                  small
-                    i.bi.bi-droplet
-                    | #{image.watermark_text}
-
-                a.image-view-button(href=`/images/${image.id}`)
-                  i.bi.bi-arrows-fullscreen
-                  | Ver imagen
+              form(method="POST", action=`/posts/${post.id}/delete`)
+                button.icon-action.danger(
+                  type="submit"
+                  title="Eliminar"
+                  onclick="return confirm('¿Eliminar esta publicación?')"
+                )
+                  i.bi.bi-trash
 
 
-        // COLECCIONES
-        if user && collections && collections.length > 0
+        // TITULO
+        .detail-title-section
 
-          - const allImagesFree = post.Images.every(image => image.license === 'free')
+          h1= post.title
 
-          if allImagesFree
-
-            .collection-box
-
-              .collection-box-header
-                .collection-icon
-                  i.bi.bi-bookmark
-
-                div
-                  strong Guardar publicación
-                  small Agregala a una de tus colecciones
-
-              details
-                summary.save-summary
-                  i.bi.bi-plus-lg
-                  | Elegir colección
-
-                .collection-options
-
-                  each collection in collections
-                    form(method="POST", action=`/collections/${collection.id}/posts/${post.id}`)
-
-                      button.collection-option(type="submit")
-                        i.bi.bi-folder
-                        span= collection.name
-                        i.bi.bi-chevron-right
+          if post.description
+            p= post.description
 
 
-          else
+          if post.Tags && post.Tags.length > 0
 
-            .fotaza-alert.alert-warning
-              i.bi.bi-shield-exclamation
-              span
-                | Esta publicación contiene imágenes con copyright y no puede guardarse completa en una colección.
+            .post-tags.detail-tags
 
-
-      else
-
-        .empty-state
-          .empty-icon
-            i.bi.bi-image
-          h3 No hay imágenes disponibles
-          p Esta publicación no tiene imágenes visibles.
+              each tag in post.Tags
+                a.tag(href=`/search?tag=${encodeURIComponent(tag.name)}`)
+                  | ##{tag.name}
 
 
-      // VOLVER
-      a.back-link(href="/posts")
-        i.bi.bi-arrow-left
-        | Volver a publicaciones
+        // IMAGENES
+        if post.Images && post.Images.length > 0
+
+          .detail-gallery
+
+            each image in post.Images
+
+              .detail-image-card
+
+                img.detail-image(
+                  src=`/images/${image.id}/raw`
+                  alt=post.title
+                  loading="lazy"
+                )
+
+                .image-information
+
+                  .image-license
+
+                    if image.license === 'free'
+                      span.license-free
+                        i.bi.bi-unlock
+                        | Libre de uso
+                    else
+                      span.license-copyright
+                        i.bi.bi-c-circle
+                        | Con copyright
+
+                  if image.watermark_text
+                    small
+                      i.bi.bi-droplet
+                      | #{image.watermark_text}
+
+                  a.image-view-button(href=`/images/${image.id}`)
+                    i.bi.bi-arrows-fullscreen
+                    | Ver imagen
 
 
-  else
+          // COLECCIONES
+          if user && collections && collections.length > 0
 
-    .empty-state
-      .empty-icon
-        i.bi.bi-search
-      h3 Publicación no encontrada
-      p La publicación que buscás no existe o ya no está disponible.
+            - const allImagesFree = post.Images.every(image => image.license === 'free')
 
-      a.create-button(href="/posts")
-        i.bi.bi-arrow-left
-        | Volver a publicaciones
+            if allImagesFree
 
+              .collection-box
+
+                .collection-box-header
+                  .collection-icon
+                    i.bi.bi-bookmark
+
+                  div
+                    strong Guardar publicación
+                    small Agregala a una de tus colecciones
+
+                details
+                  summary.save-summary
+                    i.bi.bi-plus-lg
+                    | Elegir colección
+
+                  .collection-options
+
+                    each collection in collections
+                      form(method="POST", action=`/collections/${collection.id}/posts/${post.id}`)
+
+                        button.collection-option(type="submit")
+                          i.bi.bi-folder
+                          span= collection.name
+                          i.bi.bi-chevron-right
+
+
+            else
+
+              .fotaza-alert.alert-warning
+                i.bi.bi-shield-exclamation
+                span
+                  | Esta publicación contiene imágenes con copyright y no puede guardarse completa en una colección.
+
+
+        else
+
+          .empty-state
+            .empty-icon
+              i.bi.bi-image
+            h3 No hay imágenes disponibles
+            p Esta publicación no tiene imágenes visibles.
+
+
+        // VOLVER
+        a.back-link(href="/posts")
+          i.bi.bi-arrow-left
+          | Volver a publicaciones
+
+
+    else
+
+      .empty-state
+        .empty-icon
+          i.bi.bi-search
+        h3 Publicación no encontrada
+        p La publicación que buscás no existe o ya no está disponible.
+
+        a.create-button(href="/posts")
+          i.bi.bi-arrow-left
+          | Volver a publicaciones

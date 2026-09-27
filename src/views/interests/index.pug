@@ -1,41 +1,115 @@
 extends ../layout
 
-block content
+  block content
 
-  h1 Mis intereses
+      .interests-page
 
-  if error
-    p.text-danger= error
+        .interests-header
 
-  if interests.length === 0
-    p No registraste intereses.
+          div
+            .section-kicker
+              i.bi.bi-heart-fill
+              | Contactos
 
-  each interest in interests
+            h1 Mis intereses
+            p Fotografías en las que mostraste interés y conversaciones iniciadas.
 
-    hr
+        if error
+          .alert.alert-danger.fotaza-alert
+            i.bi.bi-exclamation-triangle-fill.me-2
+            = error
 
-    if interest.Image
-      img(
-        src=`/images/${interest.Image.id}/raw`
-        width="250"
-      )
+        if interests.length === 0
 
-      p Estado: #{interest.status}
+          .interests-empty
 
-      if interest.Image.Post
-        a.btn.btn-primary.me-2(
-          href=`/posts/${interest.Image.Post.id}`
-        ) Ver publicacion
+            .interests-empty-icon
+              i.bi.bi-heart
 
-      a.btn.btn-success.me-2(
-        href=`/messages/interests/${interest.id}`
-      ) Conversacion
+            h2 Todavía no tenés intereses
 
-      if interest.status === 'open'
-        form.d-inline(
-          method="POST"
-          action=`/interests/${interest.id}/close`
-        )
-          button.btn.btn-danger(
-            type="submit"
-          ) Cerrar interes
+            p
+              | Cuando marques “Me interesa” en una fotografía, aparecerá aquí.
+
+            a.btn.btn-primary(href="/posts")
+              i.bi.bi-compass.me-1
+              | Explorar fotografías
+
+        else
+
+          .interests-grid
+
+            each interest in interests
+
+              article.interest-card
+
+                if interest.Image
+
+                  a.interest-image(
+                    href=`/images/${interest.Image.id}`
+                  )
+
+                    img(
+                      src=`/images/${interest.Image.id}/raw`,
+                      alt="Fotografía"
+                    )
+
+                .interest-body
+
+                  .interest-status
+
+                    if interest.status === 'open'
+
+                      span.status-badge.status-open
+                        i.bi.bi-circle-fill
+                        | Abierto
+
+                    else
+
+                      span.status-badge.status-closed
+                        i.bi.bi-check-circle-fill
+                        | Cerrado
+
+                  if interest.Image && interest.Image.Post
+
+                    h2
+                      a(
+                        href=`/posts/${interest.Image.Post.id}`
+                      )= interest.Image.Post.title
+
+                    if interest.Image.Post.User
+
+                      a.interest-author(
+                        href=`/profile/${interest.Image.Post.User.id}`
+                      )
+                        i.bi.bi-person-circle.me-1
+                        | #{interest.Image.Post.User.name}
+
+                  .interest-actions
+
+                    if interest.Image && interest.Image.Post
+
+                      a.btn.btn-outline-primary(
+                        href=`/posts/${interest.Image.Post.id}`
+                      )
+                        i.bi.bi-eye.me-1
+                        | Ver publicación
+
+                    a.btn.btn-primary(
+                      href=`/messages/interests/${interest.id}`
+                    )
+                      i.bi.bi-chat-dots.me-1
+                      | Conversación
+
+                    if interest.status === 'open'
+
+                      form(
+                        method="POST",
+                        action=`/interests/${interest.id}/close`
+                      )
+
+                        button.btn.btn-outline-danger(
+                          type="submit"
+                        )
+                          i.bi.bi-x-circle.me-1
+                          | Cerrar

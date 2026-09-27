@@ -1,18 +1,53 @@
 extends ../layout
 
-block content
+  block content
 
-  h1 Nueva coleccion
+    .form-page.collection-form-page
 
-  if error
-    p.text-danger= error
+      a.back-link(href="/collections")
+        i.bi.bi-arrow-left
+        | Volver a colecciones
 
-  form(method="POST", action="/collections/new")
-    label Nombre
-    input.form-control.mb-2(type="text", name="name", required)
+      .form-page-header
+        .form-heading-icon
+          i.bi.bi-bookmark-plus
 
-    button.btn.btn-success(type="submit") Crear coleccion
+        div
+          .section-kicker Nueva colección
+          h1.form-heading Crear colección
+          p
+            | Organizá tus fotografías favoritas en un espacio personalizado.
 
-  br
+      if error
+        .alert.alert-danger.fotaza-alert
+          i.bi.bi-exclamation-triangle-fill.me-2
+          = error
 
-  a.btn.btn-secondary(href="/collections") Volver
+      .form-section
+
+        .form-section-header
+          span.section-number 01
+          div
+            h2 Nombre de la colección
+            p Elegí un nombre que te permita identificarla fácilmente.
+
+        form(method="POST", action="/collections/new")
+
+          .form-field
+            label(for="collection-name") Nombre
+
+            input#collection-name.form-control(
+              type="text",
+              name="name",
+              placeholder="Ej. Paisajes favoritos",
+              required
+            )
+
+          .form-actions
+            a.btn.btn-outline-secondary(href="/collections")
+              | Cancelar
+
+            button.btn.btn-primary(type="submit")
+              i.bi.bi-check-lg.me-1
+              | Crear colección
+

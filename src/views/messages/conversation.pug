@@ -1,52 +1,144 @@
 extends ../layout
 
-block content
+  block content
 
-  h1 Conversacion
+    .conversation-page
 
-  if interest.Image
-    p Imagen:
-      a(href=`/images/${interest.Image.id}`) Ver imagen
+      a.back-link(href="/messages")
+        i.bi.bi-arrow-left
+        | Volver a conversaciones
 
-  if interest.Image && interest.Image.Post && interest.Image.Post.User
-    p Autor: #{interest.Image.Post.User.name}
 
-  hr
+      if interest
 
-  if interest.Messages && interest.Messages.length > 0
+        .conversation-header
 
-    each message in interest.Messages
+          .conversation-image
 
-      p
-        if message.sender
-          strong #{message.sender.name}:
-        else
-          strong Usuario:
-      p= message.content
+            if interest.Image
 
-      p.text-muted= message.created_at
+              a(href=`/images/${interest.Image.id}`)
 
-      hr
+                img(
+                  src=`/images/${interest.Image.id}/raw`,
+                  alt="Fotografía"
+                )
 
-  else
-    p No hay mensajes.
+          .conversation-header-info
 
-  form(
-    method="POST"
-    action=`/messages/interests/${interest.id}`
-  )
+            .section-kicker Conversación
 
-    textarea.form-control.mb-2(
-      name="content"
-      required
-    )
+            if interest.Image && interest.Image.Post
 
-    button.btn.btn-success(
-      type="submit"
-    ) Enviar mensaje
+              h1= interest.Image.Post.title
 
-  br
+            if interest.Image && interest.Image.Post && interest.Image.Post.User
 
-  a.btn.btn-secondary(
-    href="/messages"
-  ) Volver
+              p
+                | Autor:
+                a(
+                  href=`/profile/${interest.Image.Post.User.id}`
+                )
+                  = interest.Image.Post.User.name
+
+
+          if interest.status === 'open'
+
+            span.status-badge.status-open
+              i.bi.bi-circle-fill
+              | Abierto
+
+          else
+
+            span.status-badge.status-closed
+              i.bi.bi-check-circle-fill
+              | Cerrado
+
+
+        .conversation-body
+
+          if interest.Messages && interest.Messages.length > 0
+
+            .messages-thread
+
+              each message in interest.Messages
+
+                if user && message.sender_id === user.id
+
+                  .message-row.message-own
+
+                    .message-bubble
+
+                      .message-sender
+                        | Vos
+
+                      if message.created_at
+                        time= message.created_at
+
+                      p= message.content
+
+                else
+
+                  .message-row.message-other
+
+                    .message-avatar
+                      i.bi.bi-person-fill
+
+                    .message-bubble
+
+                      .message-sender
+
+                        if message.sender
+                          = message.sender.name
+                        else
+                          | Usuario
+
+                        if message.created_at
+                          time= message.created_at
+
+                      p= message.content
+
+          else
+
+            .conversation-empty
+
+              i.bi.bi-chat-square-text
+
+              h3 Todavía no hay mensajes
+
+              p Iniciá la conversación enviando el primer mensaje.
+
+
+          if interest.status === 'open'
+
+            form.conversation-form(
+              method="POST",
+              action=`/messages/interests/${interest.id}`
+            )
+
+              textarea.form-control(
+                name="content",
+                rows="3",
+                placeholder="Escribí un mensaje...",
+                required
+              )
+
+              .conversation-form-actions
+
+                span
+                  i.bi.bi-shield-check.me-1
+                  | Conversación privada
+
+                button.btn.btn-success(
+                  type="submit"
+                )
+                  i.bi.bi-send.me-1
+                  | Enviar mensaje
+
+          else
+
+            .conversation-closed
+              i.bi.bi-lock-fill
+              div
+                strong Conversación cerrada
+                p Esta conversación ya no acepta nuevos mensajes.

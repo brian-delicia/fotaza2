@@ -1,20 +1,54 @@
 extends ../layout
 
-block content
+  block content
 
-  h1 Mis colecciones
+    .collections-page
 
-  if error
-    p.text-danger= error
+      .collections-header
+        div
+          .section-kicker
+            i.bi.bi-bookmark-heart
+            | Tu espacio
 
-  a.btn.btn-success.mb-3(href="/collections/new") Nueva coleccion
+          h1 Mis colecciones
+          p Guardá y organizá las fotografías que más te gustan.
 
-  if collections.length === 0
-    p No tenes colecciones creadas.
+        a.btn.btn-primary(href="/collections/new")
+          i.bi.bi-plus-lg.me-1
+          | Nueva colección
 
-  each collection in collections
-    hr
+      if error
+        .alert.alert-danger.fotaza-alert
+          i.bi.bi-exclamation-triangle-fill.me-2
+          = error
 
-    h3= collection.name
+      if collections.length === 0
 
-    a.btn.btn-primary(href=`/collections/${collection.id}`) Ver coleccion
+        .collections-empty
+          .collections-empty-icon
+            i.bi.bi-bookmark-heart
+          h2 Todavía no tenés colecciones
+          p
+            | Creá una colección para guardar y organizar tus publicaciones favoritas.
+
+          a.btn.btn-primary(href="/collections/new")
+            i.bi.bi-plus-lg.me-1
+            | Crear mi primera colección
+
+      else
+
+        .collections-grid
+
+          each collection in collections
+            a.collection-card(href=`/collections/${collection.id}`)
+
+              .collection-card-cover
+                .collection-cover-placeholder
+                  i.bi.bi-images
+
+              .collection-card-body
+                h2= collection.name
+
+                span.collection-open
+                  | Abrir colección
+                  i.bi.bi-arrow-right

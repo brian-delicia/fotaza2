@@ -1,68 +1,46 @@
 extends ../layout
 
-block content
+  block content
 
-  .container.py-4
+    .social-list-page
 
+      .social-list-header
+        a.back-link(href=`/profile/${profileUser.id}`)
+          i.bi.bi-arrow-left
+          | Volver al perfil
 
-    .following-header
+        .social-list-heading
+          .social-list-icon
+            i.bi.bi-person-lines-fill
 
-      .following-header-icon
-        i.bi.bi-person-lines-fill
+          div
+            h1 Siguiendo
+            p Usuarios que sigue #{profileUser.name}
 
-      div
+      if following.length === 0
 
-        h1.mb-1 Usuarios que sigue #{profileUser.name}
+        .profile-empty
+          .profile-empty-icon
+            i.bi.bi-person-plus
+          h3 No sigue a ningún usuario
+          p Cuando empiece a seguir personas aparecerán aquí.
 
-        p.text-muted.mb-0
-          | Personas que este usuario decidió seguir.
+      else
 
-    if following.length === 0
+        .users-list
+          each follow in following
+            if follow.followedUser
+              .user-list-card
 
-      .following-empty
-
-        .following-empty-icon
-          i.bi.bi-people
-
-        h3 No sigue a nadie
-
-        p
-          | Este usuario todavía no sigue a ninguna persona.
-
-    else
-
-      .row.g-4
-
-        each follow in following
-
-          if follow.followedUser
-
-            .col-12.col-md-6.col-lg-4
-
-              .following-card
-
-                .following-avatar
+                .user-list-avatar
                   i.bi.bi-person-fill
 
-                .following-content
-
+                .user-list-info
                   h3= follow.followedUser.name
+                  span Usuario de Fotaza
 
-                  p
-                    i.bi.bi-envelope.me-2
-                    | #{follow.followedUser.email}
-
-                a.btn.btn-primary.rounded-pill.w-100(
+                a.btn.btn-outline-primary(
                   href=`/profile/${follow.followedUser.id}`
                 )
-                  i.bi.bi-person.me-2
+                  i.bi.bi-person.me-1
                   | Ver perfil
-
-    .following-back
-
-      a.btn.btn-outline-secondary.rounded-pill(
-        href=`/profile/${profileUser.id}`
-      )
-        i.bi.bi-arrow-left.me-2
-        | Volver al perfil
-

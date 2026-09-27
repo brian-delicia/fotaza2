@@ -1,67 +1,205 @@
 extends ../layout
 
-block content
+  block content
 
-  h1= collection.name
+    .collection-detail-page
 
-  form(method="POST", action=`/collections/${collection.id}/edit`)
-    label Cambiar nombre
-    input.form-control.mb-2(type="text", name="name", value=collection.name, required)
-    button.btn.btn-primary(type="submit") Guardar nombre
+      a.back-link(href="/collections")
+        i.bi.bi-arrow-left
+        | Volver a colecciones
 
-  form.mt-2(method="POST", action=`/collections/${collection.id}/delete`)
-    button.btn.btn-danger(type="submit") Eliminar coleccion
+      .collection-detail-header
 
-  hr
+        .collection-detail-icon
+          i.bi.bi-bookmark-heart-fill
 
-  h2 Publicaciones guardadas
+        .collection-detail-main
+          .section-kicker Colección
 
-  if collection.Posts && collection.Posts.length > 0
-    each post in collection.Posts
-      hr
+          h1= collection.name
 
-      h3= post.title
+          .collection-detail-meta
+            if collection.Posts
+              span
+                i.bi.bi-grid-3x3-gap.me-1
+                | #{collection.Posts.length} publicación#{collection.Posts.length === 1 ? '' : 'es'}
 
-      if post.User
-        p Autor: #{post.User.name}
+            if collection.Images
+              span
+                i.bi.bi-image.me-1
+                | #{collection.Images.length} imagen#{collection.Images.length === 1 ? '' : 'es'}
 
-      if post.Images && post.Images.length > 0
-        img(src=`/images/${post.Images[0].id}/raw`, width="250")
+        .collection-detail-actions
+          form(method="POST", action=`/collections/${collection.id}/delete`)
+            button.btn.btn-outline-danger(
+              type="submit",
+              onclick="return confirm('¿Querés eliminar esta colección?')"
+            )
+              i.bi.bi-trash.me-1
+              | Eliminar
 
-      br
-      br
+      // ========================================================
+      // EDITAR NOMBRE
+      // ========================================================
 
-      a.btn.btn-primary.me-2(href=`/posts/${post.id}`) Ver publicacion
+      .collection-edit-box
 
-      form.d-inline(method="POST", action=`/collections/${collection.id}/posts/${post.id}/remove`)
-        button.btn.btn-danger(type="submit") Quitar
-  else
-    p No hay publicaciones guardadas.
+        .collection-edit-title
+          i.bi.bi-pencil-square
+          span Editar colección
 
-  hr
+        form.collection-edit-form(
+          method="POST",
+          action=`/collections/${collection.id}/edit`
+        )
+          input.form-control(
+            type="text",
+            name="name",
+            value=collection.name,
+            required
+          )
 
-  h2 Imagenes guardadas
+          button.btn.btn-primary(type="submit")
+            i.bi.bi-check-lg.me-1
+            | Guardar
 
-  if collection.Images && collection.Images.length > 0
-    each image in collection.Images
-      hr
 
-      img(src=`/images/${image.id}/raw`, width="250")
+      // ========================================================
+      // PUBLICACIONES
+      // ========================================================
 
-      p Licencia: #{image.license}
+      .collection-section
 
-      if image.Post
-        p Publicacion:
-          a(href=`/posts/${image.Post.id}`)  Ver publicacion
+        .collection-section-header
+          div
+            .section-kicker Publicaciones
+            h2 Publicaciones guardadas
 
-      a.btn.btn-primary.me-2(href=`/images/${image.id}`) Ver imagen
+          if collection.Posts
+            span.collection-section-count
+              | #{collection.Posts.length}
 
-      form.d-inline(method="POST", action=`/collections/${collection.id}/images/${image.id}/remove`)
-        button.btn.btn-danger(type="submit") Quitar
-  else
-    p No hay imagenes guardadas.
+        if collection.Posts && collection.Posts.length > 0
 
-  br
-  br
+          .collection-post-grid
 
-  a.btn.btn-secondary(href="/collections") Volver
+            each post in collection.Posts
+              if post.Images && post.Images.length > 0
+
+                article.collection-post-card
+
+                  a.collection-post-image(
+                    href=`/posts/${post.id}`
+                  )
+                    img(
+                      src=`/images/${post.Images[0].id}/raw`,
+                      alt=post.title
+                    )
+
+                    if post.Images.length > 1
+                      span.collection-image-count
+                        i.bi.bi-images.me-1
+                        | #{post.Images.length}
+
+                  .collection-post-body
+
+                    if post.User
+                      a.collection-post-author(
+                        href=`/profile/${post.User.id}`
+                      )
+                        i.bi.bi-person-circle.me-1
+                        = post.User.name
+
+                    h3
+                      a(href=`/posts/${post.id}`)= post.title
+
+                    form(
+                      method="POST",
+                      action=`/collections/${collection.id}/posts/${post.id}/remove`
+                    )
+                      button.btn.btn-sm.btn-outline-danger(type="submit")
+                        i.bi.bi-bookmark-x.me-1
+                        | Quitar
+
+        else
+
+          .collection-empty
+            .collection-empty-icon
+              i.bi.bi-images
+            h3 No hay publicaciones guardadas
+            p
+              | Cuando guardes una publicación en esta colección aparecerá aquí.
+            a.btn.btn-outline-primary(href="/posts")
+              i.bi.bi-compass.me-1
+              | Explorar fotografías
+
+
+      // ========================================================
+      // IMÁGENES
+      // ========================================================
+
+      .collection-section
+
+        .collection-section-header
+          div
+            .section-kicker Imágenes
+            h2 Imágenes guardadas
+
+          if collection.Images
+            span.collection-section-count
+              | #{collection.Images.length}
+
+        if collection.Images && collection.Images.length > 0
+
+          .collection-image-grid
+
+            each image in collection.Images
+
+              article.collection-image-card
+
+                a(href=`/images/${image.id}`)
+                  img(
+                    src=`/images/${image.id}/raw`,
+                    alt="Imagen guardada"
+                  )
+
+                .collection-image-body
+
+                  span.collection-license
+                    if image.license === 'free'
+                      i.bi.bi-check-circle-fill.me-1
+                      | Sin copyright
+                    else
+                      i.bi.bi-shield-lock-fill.me-1
+                      | Copyright
+
+                  if image.Post && image.Post.User
+                    a.collection-image-author(
+                      href=`/profile/${image.Post.User.id}`
+                    )
+                      | Por #{image.Post.User.name}
+
+                  .collection-image-actions
+
+                    a.btn.btn-sm.btn-outline-primary(
+                      href=`/images/${image.id}`
+                    )
+                      i.bi.bi-eye.me-1
+                      | Ver
+
+                    form(
+                      method="POST",
+                      action=`/collections/${collection.id}/images/${image.id}/remove`
+                    )
+                      button.btn.btn-sm.btn-outline-danger(type="submit")
+                        i.bi.bi-x-lg
+                        | Quitar
+
+        else
+
+          .collection-empty
+            .collection-empty-icon
+              i.bi.bi-image
+            h3 No hay imágenes guardadas
+            p Las imágenes que guardes directamente aparecerán en esta sección.
+

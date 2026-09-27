@@ -1,171 +1,236 @@
-
+doctype html
 html(lang="es")
-  head
-    meta(charset="UTF-8")
-    meta(name="viewport", content="width=device-width, initial-scale=1.0")
+head
+meta(charset="UTF-8")
+meta(name="viewport", content="width=device-width, initial-scale=1.0")
+meta(name="description" content="Fotaza2 - Red social de fotografía")
 
-    title= title || "Fotaza"
 
-    // Bootstrap
-    link(
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+title Fotaza2
+
+link(
+  href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+  rel="stylesheet"
+)
+
+link(
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+)
+
+link(
+  rel="stylesheet"
+  href="/css/styles.css"
+)
+
+
+body
+
+
+//- ============================================================
+//- NAVBAR
+//- ============================================================
+
+nav.navbar.navbar-expand-lg.fotaza-navbar
+  .container
+
+    //- Logo
+    a.navbar-brand.fotaza-brand(href="/")
+      span.brand-icon
+        i.bi.bi-camera-fill
+      span Fotaza2
+
+    //- Botón mobile
+    button.navbar-toggler(
+      type="button"
+      data-bs-toggle="collapse"
+      data-bs-target="#mainNavbar"
+      aria-controls="mainNavbar"
+      aria-expanded="false"
+      aria-label="Abrir navegación"
     )
+      i.bi.bi-list
 
-    // Bootstrap Icons
-    link(
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
-    )
+    .collapse.navbar-collapse#mainNavbar
 
-    // Nuestro CSS
-    link(
-      rel="stylesheet"
-      href="/css/styles.css"
-    )
+      //- Navegación principal
+      ul.navbar-nav.me-auto.mb-2.mb-lg-0
 
-  body
+        li.nav-item
+          a.nav-link(href="/")
+            i.bi.bi-house-door
+            span Inicio
 
-    // NAVBAR
-    nav.navbar.navbar-expand-lg.fotaza-navbar
-      .container
+        if user
+          li.nav-item
+            a.nav-link(href="/posts/following")
+              i.bi.bi-people
+              span Siguiendo
 
-        // LOGO
-        a.navbar-brand.fotaza-logo(href="/posts")
-          i.bi.bi-camera-fill
-          span Fotaza
+        li.nav-item
+          a.nav-link(href="/search")
+            i.bi.bi-compass
+            span Explorar
 
-        // BOTON MOBILE
-        button.navbar-toggler(
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#fotazaNavbar"
-          aria-controls="fotazaNavbar"
-          aria-expanded="false"
-          aria-label="Abrir menú"
-        )
-          i.bi.bi-list
+        if user
+          li.nav-item
+            a.nav-link(href="/posts/new")
+              i.bi.bi-plus-square
+              span Publicar
 
-        .collapse.navbar-collapse#fotazaNavbar
+      //- Navegación del usuario
+      if user
+        ul.navbar-nav.align-items-lg-center
 
-          if user
+          //- Notificaciones
+          li.nav-item
+            a.nav-link.nav-icon-link(
+              href="/notifications"
+              title="Notificaciones"
+            )
+              i.bi.bi-bell
+              if unreadNotificationsCount > 0
+                span.notification-badge= unreadNotificationsCount
 
-            // NAVEGACION PRINCIPAL
-            ul.navbar-nav.me-auto.mb-2.mb-lg-0
+          //- Mensajes
+          li.nav-item
+            a.nav-link.nav-icon-link(
+              href="/messages"
+              title="Mensajes"
+            )
+              i.bi.bi-chat-dots
+              if unreadMessagesCount > 0
+                span.notification-badge.message-badge= unreadMessagesCount
 
-              li.nav-item
-                a.nav-link(href="/posts")
-                  i.bi.bi-house-door
-                  span Inicio
+          //- Menú del usuario
+          li.nav-item.dropdown
+            a.nav-link.dropdown-toggle.user-menu(
+              href="#"
+              role="button"
+              data-bs-toggle="dropdown"
+              aria-expanded="false"
+            )
+              span.user-avatar
+                i.bi.bi-person-fill
+              span.user-name= user.username
 
-              li.nav-item
-                a.nav-link(href="/search")
-                  i.bi.bi-search
-                  span Explorar
+            ul.dropdown-menu.dropdown-menu-end.fotaza-dropdown
 
-              li.nav-item
-                a.nav-link(href="/collections")
-                  i.bi.bi-collection
-                  span Colecciones
+              li
+                a.dropdown-item(href="/profile/" + user.id)
+                  i.bi.bi-person-circle
+                  span Mi perfil
 
-              li.nav-item
-                a.nav-link(href="/messages")
-                  i.bi.bi-chat-dots
-                  span Mensajes
+              li
+                a.dropdown-item(href="/collections")
+                  i.bi.bi-bookmark
+                  span Mis colecciones
 
-                  if unreadMessagesCount > 0
-                    span.notification-badge= unreadMessagesCount
+              li
+                a.dropdown-item(href="/interests")
+                  i.bi.bi-heart
+                  span Me interesa
 
-              li.nav-item
-                a.nav-link(href="/notifications")
-                  i.bi.bi-bell
-                  span Notificaciones
+              li
+                hr.dropdown-divider
 
-                  if unreadNotificationsCount > 0
-                    span.notification-badge= unreadNotificationsCount
-
-              if user.role === 'validator'
-                li.nav-item
-                  a.nav-link.validator-link(href="/validator/reports")
+              //- Opciones relacionadas con moderación
+              if user.role === "validator" || user.role === "admin"
+                li
+                  a.dropdown-item(href="/validator")
                     i.bi.bi-shield-check
                     span Validador
 
+                li
+                  a.dropdown-item(href="/comments/reported")
+                    i.bi.bi-flag
+                    span Comentarios reportados
 
-            // ACCIONES DERECHA
-            .fotaza-user-area
+                li
+                  hr.dropdown-divider
 
-              a.create-button(href="/posts/new")
-                i.bi.bi-plus-lg
-                span Publicar
+              li
+                a.dropdown-item.logout-item(href="/logout")
+                  i.bi.bi-box-arrow-right
+                  span Cerrar sesión
 
-              a.profile-link(href=`/profile/${user.id}`)
-                .profile-avatar
-                  i.bi.bi-person-fill
+      else
+        //- Usuario anónimo
+        ul.navbar-nav.align-items-lg-center
 
-                span.d-none.d-lg-inline= user.username || user.name || "Perfil"
+          li.nav-item
+            a.nav-link.login-link(href="/login")
+              i.bi.bi-box-arrow-in-right
+              span Iniciar sesión
 
-              button.logout-button(
-                type="button"
-                data-bs-toggle="modal"
-                data-bs-target="#logoutModal"
-                title="Cerrar sesión"
-              )
-                i.bi.bi-box-arrow-right
-
-
-          else
-
-            .auth-buttons.ms-auto
-              a.login-button(href="/login")
-                i.bi.bi-box-arrow-in-right
-                span Iniciar sesión
-
-              a.register-button(href="/register")
-                i.bi.bi-person-plus
-                span Crear cuenta
+          li.nav-item
+            a.btn.btn-primary.register-button(href="/register")
+              i.bi.bi-person-plus
+              span Crear cuenta
 
 
-    // CONTENIDO
-    main.fotaza-main
-      .container
-        block content
+//- ============================================================
+//- CONTENIDO
+//- ============================================================
+
+main.fotaza-main
+
+  //- Mensajes generales
+  if success
+    .container
+      .alert.alert-success.fotaza-alert(role="alert")
+        i.bi.bi-check-circle-fill
+        span= success
+
+  if error
+    .container
+      .alert.alert-danger.fotaza-alert(role="alert")
+        i.bi.bi-exclamation-circle-fill
+        span= error
+
+  block content
 
 
-    // MODAL LOGOUT
-    if user
-      #logoutModal.modal.fade(tabindex="-1")
-        .modal-dialog.modal-dialog-centered
-          .modal-content.fotaza-modal
+//- ============================================================
+//- FOOTER
+//- ============================================================
 
-            .modal-header
-              h5.modal-title
-                i.bi.bi-box-arrow-right.me-2
-                | Cerrar sesión
+footer.fotaza-footer
+  .container
+    .footer-content
 
-              button.btn-close(
-                type="button"
-                data-bs-dismiss="modal"
-                aria-label="Cerrar"
-              )
+      .footer-brand
+        span.footer-logo
+          i.bi.bi-camera-fill
+        span Fotaza2
 
-            .modal-body
-              p.mb-0
-                | ¿Estás seguro de que querés cerrar tu sesión?
+      p.footer-text
+        | Compartí tus fotografías, descubrí nuevos talentos
+        | y conectá con otros amantes de la fotografía.
 
-            .modal-footer
-              button.cancel-button(
-                type="button"
-                data-bs-dismiss="modal"
-              )
-                | Cancelar
+      .footer-links
+        if user
+          a(href="/")
+            | Inicio
+          a(href="/search")
+            | Explorar
+          a(href="/posts/following")
+            | Siguiendo
+        else
+          a(href="/")
+            | Inicio
+          a(href="/search")
+            | Explorar
 
-              a.confirm-logout(href="/logout")
-                i.bi.bi-box-arrow-right.me-1
-                | Cerrar sesión
+    .footer-bottom
+      span © 2026 Fotaza2
+      span Una red social para amantes de la fotografía.
 
 
-    // Bootstrap JS
-    script(
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-    )
+//- Bootstrap JS
+script(
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+)
+
+block scripts
 

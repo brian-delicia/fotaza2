@@ -1,154 +1,98 @@
 extends ../layout
 
-block content
-
-  .container.py-4
-
+  block content
 
     if profileUser
+      .profile-page
 
-      .profile-header
+        .profile-hero
+          .profile-avatar
+            i.bi.bi-person-fill
 
-        .profile-avatar
-          i.bi.bi-person-fill
+          .profile-main
+            .profile-name-row
+              h1= profileUser.name
 
-        .profile-info
+              if user && user.id === profileUser.id
+                span.profile-badge
+                  i.bi.bi-person-check-fill
+                  | Tu perfil
 
-          h1.profile-name= profileUser.name
+            .profile-stats
+              a.profile-stat(href=`/profile/${profileUser.id}/followers`)
+                strong= followersCount
+                span Seguidores
 
-          p.profile-email
-            i.bi.bi-envelope.me-2
-            | #{profileUser.email}
+              a.profile-stat(href=`/profile/${profileUser.id}/following`)
+                strong= followingCount
+                span Siguiendo
 
-          .profile-stats
-
-            a.profile-stat(
-              href=`/profile/${profileUser.id}/followers`
-            )
-              strong= followersCount
-              span Seguidores
-
-            a.profile-stat(
-              href=`/profile/${profileUser.id}/following`
-            )
-              strong= followingCount
-              span Siguiendo
-
-        .profile-actions
-
-          if user && user.id !== profileUser.id
-
-            if isFollowing
-
-              form(
-                method="POST"
-                action=`/follows/${profileUser.id}/unfollow`
-              )
-                button.btn.btn-outline-danger.rounded-pill.px-4(
-                  type="submit"
-                )
-                  i.bi.bi-person-dash.me-2
-                  | Dejar de seguir
-
-            else
-
-              form(
-                method="POST"
-                action=`/follows/${profileUser.id}`
-              )
-                button.btn.btn-primary.rounded-pill.px-4(
-                  type="submit"
-                )
-                  i.bi.bi-person-plus.me-2
-                  | Seguir
-
-      .profile-navigation
-
-        a.btn.btn-outline-secondary.rounded-pill(
-          href=`/profile/${profileUser.id}/followers`
-        )
-          i.bi.bi-people.me-2
-          | Seguidores
-
-        a.btn.btn-outline-secondary.rounded-pill(
-          href=`/profile/${profileUser.id}/following`
-        )
-          i.bi.bi-person-lines-fill.me-2
-          | Siguiendo
-
-      .profile-posts-header
-
-        h2
-          i.bi.bi-grid-3x3-gap-fill.me-2
-          | Publicaciones
-
-      if posts.length === 0
-
-        .profile-empty
-
-          .profile-empty-icon
-            i.bi.bi-images
-
-          h3 Sin publicaciones
-
-          p
-            | Este usuario todavía no tiene publicaciones.
-
-      else
-
-        .row.g-4
-
-          each post in posts
-
-            .col-12.col-md-6.col-xl-4
-
-              .profile-post-card
-
-                if post.Images && post.Images.length > 0
-
-                  a.profile-post-image(
-                    href=`/posts/${post.id}`
-                  )
-                    img(
-                      src=`/images/${post.Images[0].id}/raw`
-                      alt=post.title
-                    )
-
+            .profile-actions
+              if user && user.id !== profileUser.id
+                if isFollowing
+                  form(method="POST", action=`/follows/${profileUser.id}/unfollow`)
+                    button.btn.btn-outline-danger(type="submit")
+                      i.bi.bi-person-dash.me-1
+                      | Dejar de seguir
                 else
+                  form(method="POST", action=`/follows/${profileUser.id}`)
+                    button.btn.btn-primary(type="submit")
+                      i.bi.bi-person-plus.me-1
+                      | Seguir
 
-                  a.profile-post-image.profile-post-placeholder(
-                    href=`/posts/${post.id}`
+              a.btn.btn-outline-secondary(href=`/profile/${profileUser.id}/followers`)
+                i.bi.bi-people.me-1
+                | Seguidores
+
+              a.btn.btn-outline-secondary(href=`/profile/${profileUser.id}/following`)
+                i.bi.bi-person-lines-fill.me-1
+                | Siguiendo
+
+        .profile-divider
+
+        .profile-content-header
+          .profile-content-title
+            i.bi.bi-grid-3x3-gap-fill
+            h2 Publicaciones
+
+          span.profile-post-count
+            | #{posts.length} publicación#{posts.length === 1 ? '' : 'es'}
+
+        if posts.length === 0
+          .profile-empty
+            .profile-empty-icon
+              i.bi.bi-camera
+            h3 Todavía no hay fotografías
+            p Este usuario todavía no tiene publicaciones.
+            if user && user.id === profileUser.id
+              a.btn.btn-primary(href="/posts/new")
+                i.bi.bi-plus-lg.me-1
+                | Publicar fotografía
+
+        else
+          .profile-grid
+            each post in posts
+              if post.Images && post.Images.length > 0
+                a.profile-photo-card(href=`/posts/${post.id}`)
+                  img.profile-photo(
+                    src=`/images/${post.Images[0].id}/raw`,
+                    alt=post.title
                   )
-                    i.bi.bi-image
 
-                .profile-post-content
+                  .profile-photo-overlay
+                    .profile-photo-info
+                      strong= post.title
 
-                  h3= post.title
-
-                  if post.description
-                    p= post.description
-
-                  a.btn.btn-primary.rounded-pill.w-100(
-                    href=`/posts/${post.id}`
-                  )
-                    i.bi.bi-eye.me-2
-                    | Ver publicación
+                      if post.Images.length > 1
+                        span
+                          i.bi.bi-images.me-1
+                          | #{post.Images.length}
 
     else
-
-      .profile-not-found
-
-        .profile-not-found-icon
+      .empty-state
+        .empty-state-icon
           i.bi.bi-person-x
-
         h2 Usuario no encontrado
-
-        p
-          | El perfil que estás buscando no existe.
-
-        a.btn.btn-primary.rounded-pill.px-4(
-          href="/posts"
-        )
-          i.bi.bi-house.me-2
-          | Volver a publicaciones
+        p El perfil que buscás no existe o ya no está disponible.
+        a.btn.btn-primary(href="/posts") Volver a publicaciones
 

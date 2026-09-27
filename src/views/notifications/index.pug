@@ -1,33 +1,109 @@
 extends ../layout
 
-block content
+  block content
 
-  h1 Notificaciones
+    .notifications-page
 
-  if error
-    p.text-danger= error
+      .notifications-header
 
-  form(method="POST", action="/notifications/read-all")
-    button.btn.btn-secondary(type="submit") Marcar todas como leidas
+        div
+          .section-kicker
+            i.bi.bi-bell-fill
+            | Actividad
 
-  if notifications.length === 0
-    p No tenes notificaciones.
+          h1 Notificaciones
+          p Acá podés consultar las novedades relacionadas con tu cuenta.
 
-  each notification in notifications
-    hr
+        form(
+          method="POST",
+          action="/notifications/read-all"
+        )
 
-    p Tipo: #{notification.type}
+          button.btn.btn-outline-primary(
+            type="submit"
+          )
+            i.bi.bi-check2-all.me-1
+            | Marcar todas como leídas
 
-    if notification.actor
-      p Usuario: #{notification.actor.name}
 
-    p Mensaje: #{notification.message}
-    p Fecha: #{notification.date}
+      if error
+        .alert.alert-danger.fotaza-alert
+          i.bi.bi-exclamation-triangle-fill.me-2
+          = error
 
-    if notification.read
-      p Estado: Leida
-    else
-      p Estado: No leida
 
-      form(method="POST", action=`/notifications/${notification.id}/read`)
-        button.btn.btn-primary(type="submit") Marcar como leida
+      if notifications.length === 0
+
+        .notifications-empty
+
+          .notifications-empty-icon
+            i.bi.bi-bell
+
+          h2 No tenés notificaciones
+
+          p Cuando ocurra algo relacionado con tu cuenta aparecerá aquí.
+
+
+      else
+
+        .notifications-list
+
+          each notification in notifications
+
+            article.notification-card(
+              class=notification.read ? 'notification-read' : 'notification-unread'
+            )
+
+              .notification-icon
+
+                if notification.type === 'interest'
+                  i.bi.bi-heart-fill
+
+                else if notification.type === 'message'
+                  i.bi.bi-chat-fill
+
+                else if notification.type === 'follow'
+                  i.bi.bi-person-plus-fill
+
+                else
+                  i.bi.bi-bell-fill
+
+
+              .notification-content
+
+                .notification-top
+
+                  if notification.actor
+
+                    a.notification-actor(
+                      href=`/profile/${notification.actor.id}`
+                    )
+                      = notification.actor.name
+
+                  if notification.date
+
+                    time.notification-date
+                      = notification.date
+
+                p.notification-message
+                  = notification.message
+
+
+              if notification.read
+
+                span.notification-status.read-status
+                  i.bi.bi-check2
+                  | Leída
+
+              else
+
+                form(
+                  method="POST",
+                  action=`/notifications/${notification.id}/read`
+                )
+
+                  button.btn.btn-sm.btn-primary(
+                    type="submit"
+                  )
+                    i.bi.bi-check2.me-1
+                    | Marcar como leída

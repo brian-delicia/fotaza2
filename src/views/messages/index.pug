@@ -1,36 +1,101 @@
 extends ../layout
 
-block content
+  block content
 
-   h1 Conversaciones
+    .messages-page
 
-   if error
-     p.text-danger= error
+      .messages-header
 
-   if interests && interests.length > 0
-    each interest in interests
-      .card.mb-3
-        .card-body
+        div
+          .section-kicker
+            i.bi.bi-chat-dots-fill
+            | Comunicación
 
-          if interest.Image && interest.Image.Post
-            h5= interest.Image.Post.title
+          h1 Conversaciones
+          p Contactá con otros usuarios a través de tus intereses.
 
-          if user.id === interest.Image.Post.user_id
-            p
-              strong Interesado:
-              |  #{interest.User.name}
-          else
-            p
-              strong Autor:
-              |  #{interest.Image.Post.User.name}
+      if error
+        .alert.alert-danger.fotaza-alert
+          i.bi.bi-exclamation-triangle-fill.me-2
+          = error
 
-          if interest.Image
-            img.mb-2(src=`/images/${interest.Image.id}/raw`, width="150")
+      if interests && interests.length > 0
 
-          br
+        .conversations-list
 
-          a.btn.btn-primary(href=`/messages/interests/${interest.id}`)
-            | Abrir conversacion
+          each interest in interests
 
-    else
-      p No tenes conversaciones.
+            if interest.Image && interest.Image.Post
+
+              .conversation-card
+
+                .conversation-image
+
+                  if interest.Image
+
+                    img(
+                      src=`/images/${interest.Image.id}/raw`,
+                      alt="Fotografía"
+                    )
+
+                .conversation-info
+
+                  .conversation-title
+
+                    h2= interest.Image.Post.title
+
+                    if interest.status === 'open'
+
+                      span.status-badge.status-open
+                        i.bi.bi-circle-fill
+                        | Abierto
+
+                    else
+
+                      span.status-badge.status-closed
+                        i.bi.bi-check-circle-fill
+                        | Cerrado
+
+
+                  if user.id === interest.Image.Post.user_id
+
+                    p.conversation-participant
+
+                      span
+                        i.bi.bi-person.me-1
+                        | Interesado:
+
+                      strong= interest.User.name
+
+                  else
+
+                    p.conversation-participant
+
+                      span
+                        i.bi.bi-person.me-1
+                        | Autor:
+
+                      strong= interest.Image.Post.User.name
+
+
+                  a.btn.btn-primary(
+                    href=`/messages/interests/${interest.id}`
+                  )
+                    i.bi.bi-chat-dots.me-1
+                    | Abrir conversación
+
+      else
+
+        .messages-empty
+
+          .messages-empty-icon
+            i.bi.bi-chat-square-text
+
+          h2 No tenés conversaciones
+
+          p
+            | Cuando marques “Me interesa” en una fotografía podrás conversar con su autor.
+
+          a.btn.btn-primary(href="/posts")
+            i.bi.bi-compass.me-1
+            | Explorar fotografías
